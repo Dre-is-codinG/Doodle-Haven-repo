@@ -14,6 +14,10 @@ application. By retrieving these dimensions, I can ensure that the objects and c
 rendered appropriately to fit any screen of any size or type.
 */
 export default function LogInScreen( { navigation } ) {
+
+  const [Email, setEmail] = useState('');// sets the state for email in form field
+  const [Password, setPassword] = useState(''); // sets the state for password in form field
+
   useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
       screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
       return () => { screenOrientation.unlockAsync(); 

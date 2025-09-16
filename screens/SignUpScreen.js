@@ -7,7 +7,6 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import FormField from '../components/FormField';
 import { Link } from '@react-navigation/native';
-import { signUp } from '../services/authLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -60,19 +59,11 @@ export default function SignUpScreen( { navigation } ) {
       </View>
       <DefaultButton 
         title={"Sign Up!"}
-        handlePress={async () => {// calls asynchronous function to handle the user sign up and registeration process
-          console.log("Sign Up Button Pressed");// logs to console to ensure that the button has been pressed.
-          const result = await signUp(Email, Password, Username);
-// awaits the result of the signUp function and passes email, password and username as parameters
-          if (result.error) {// checks if registeration encounters any errors
-            console.log("Error signing up: ", result.error);// logs error to console
-            alert("Error signing up: " + result.error);
-          } else {//proceeds to register the user and navigate them to the homescreen if no errors were encountered
-            console.log("User signed up successfully: ", result.user);
-            alert("User signed up successfully!");
+        handlePress={ () => {
+            console.log("Sign up button pressed")
             navigation.navigate('HomeScreen');
           }
-        }}
+        }
       />
       <StatusBar style="auto" />
     </SafeAreaView>

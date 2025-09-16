@@ -1,7 +1,7 @@
-import { auth } from '../firebaseConfig';
+import { auth, db } from '../lib/firebaseConfig';
 import { doc, setDoc } from "firebase/firestore";
-import { db } from '../firebaseConfig';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+
 // importing necessary functions from firebase auth library to handle authentication
 
 // Function to handle user login
