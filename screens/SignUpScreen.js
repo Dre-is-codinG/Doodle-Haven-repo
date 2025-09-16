@@ -50,7 +50,7 @@ export default function SignUpScreen( { navigation } ) {
         placeholder={"Enter a Password"}
         value={Password}
         handleChangeText={text => setPassword(text)}
-        />
+        /> 
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
           <Text>Already have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('LogInScreen')} style={styles.LinkView}>
@@ -60,9 +60,18 @@ export default function SignUpScreen( { navigation } ) {
       </View>
       <DefaultButton 
         title={"Sign Up!"}
-        handlePress={ () => {
-          console.log("Sign Up Button Pressed");
-          navigation.navigate('HomeScreen');
+        handlePress={async () => {// calls asynchronous function to handle the user sign up and registeration process
+          console.log("Sign Up Button Pressed");// logs to console to ensure that the button has been pressed.
+          const result = await signUp(Email, Password, Username);
+// awaits the result of the signUp function and passes email, password and username as parameters
+          if (result.error) {// checks if registeration encounters any errors
+            console.log("Error signing up: ", result.error);// logs error to console
+            alert("Error signing up: " + result.error);
+          } else {//proceeds to register the user and navigate them to the homescreen if no errors were encountered
+            console.log("User signed up successfully: ", result.user);
+            alert("User signed up successfully!");
+            navigation.navigate('HomeScreen');
+          }
         }}
       />
       <StatusBar style="auto" />
