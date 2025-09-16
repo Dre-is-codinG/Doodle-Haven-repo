@@ -7,6 +7,7 @@ import OnboardingScreen from "./screens/OnboardingScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import LogInScreen from "./screens/LogInScreen";
 import HomeScreen from "./screens/HomeScreen";
+import CanvasScreen from "./screens/CanvasScreen";
 import * as Font from 'expo-font';
 
 const Stack = createNativeStackNavigator();
@@ -47,7 +48,8 @@ export default function App() {
         <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen name="LogInScreen" component={LogInScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{gestureEnabled: false}} />
+        <Stack.Screen name="CanvasScreen" component={CanvasScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

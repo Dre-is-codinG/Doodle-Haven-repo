@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity, } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import FormField from '../components/FormField';
 import { Link } from '@react-navigation/native';
+import { signUp } from '../services/authLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -59,10 +60,21 @@ export default function SignUpScreen( { navigation } ) {
       </View>
       <DefaultButton 
         title={"Sign Up!"}
-        handlePress={ () => {
-            console.log("Sign up button pressed")
-            navigation.navigate('HomeScreen');
-          }
+        handlePress={async () => {// async function waits for Firebase promises
+          console.log("Sign Up Button Pressed"); 
+          const result = await signUp(Email, Password, Username); 
+          if (result.error) { // returns error message when encountring an error when attempting to sign up
+            console.log("Error signing up: ", result.error); 
+            alert("Error signing up: " + result.error);
+            // console logs errors that were encountered when attempting to register the user
+          } else { 
+            console.log("User signed up successfully: ", result.user);
+            // if no errors werre encountered, user's details is logged to console
+            alert("User signed up successfully!"); // sends alert that no errors were encountered
+            setTimeout(() => {// delays console log so that firebase validation routines can be fully finished
+              navigation.navigate('HomeScreen');// aftwards navigates user to homescreen.
+            }, 0)
+          }}
         }
       />
       <StatusBar style="auto" />

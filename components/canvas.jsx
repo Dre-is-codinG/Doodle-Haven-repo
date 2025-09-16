@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   toolBarStyling: {
-    width: width * 0.73,
+    width: width * 0.731,
     height: height * 0.3,
     borderWidth: 2,
     borderRadius: 10,

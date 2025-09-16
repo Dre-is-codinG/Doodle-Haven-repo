@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity, ImageBackground } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +13,7 @@ Using the React Native Dimensions object, I am able to access the dimensions of 
 application. By retrieving these dimensions, I can ensure that the objects and components within the screen are
 rendered appropriately to fit any screen of any size or type.
 */
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   
   useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
     screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
@@ -44,66 +44,125 @@ loaded and is complete.
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeareastyle}>
-      <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
-        <View style={styles.radiustestview}>
+
+    <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
+      <ImageBackground
+      source={require('../assets/images/main.png')}
+      style={styles.safeareastyle}
+      >
+        <TouchableOpacity 
+        style={styles.drawButtonStyle}
+        activeOpacity={0.4}
+        onPress={() => {navigation.navigate('CanvasScreen')}}
+        >
+          <Text style={styles.drawButtonTextStyle}>DRAW!</Text>
           <Image
-          source={require('../assets/images/logo.png')}
-          style={styles.logoStyle}
+          source={require('../assets/images/paint-palette.png')}
+          style={styles.paletteImageStyle}
           />
+        </TouchableOpacity>
+        <View style={styles.box2}>
+          <TouchableOpacity
+          style={styles.galleryButtonStyle}
+          activeOpacity={0.4}
+          >
+            <Image 
+            source={require('../assets/images/image-gallery.png')}
+            style={styles.box2ImageStyle}
+            />
+            <Text style={styles.buttonTextStyle}>GALLERY</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+          style={styles.settingsButtonStyle}
+          activeOpacity={0.4}
+          >
+            <Image 
+            source={require('../assets/images/settings.png')}
+            style={styles.box2ImageStyle}
+            />
+            <Text style={styles.buttonTextStyle}>SETTINGS</Text>
+          </TouchableOpacity>
         </View>
-        <Text style={styles.titleStyle}>Welcome to Doodle-Haven!</Text>
-        <Text style={styles.subTitleStyle}>Discover more through Art!</Text>
-      </Animated.View>
-      <StatusBar style="auto" />
-    </SafeAreaView>
+        <StatusBar style='auto'/>
+      </ImageBackground>
+    </Animated.View>
+
   );
 }
 const styles = StyleSheet.create({
     safeareastyle: {
     flex: 1,
-    backgroundColor: theme.COLOURS.background,
+    backgroundColor: theme.COLOURS.tertiary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  titleStyle: {
-    fontSize: theme.FONTS.titleFontSize,
-    color: '#120C08',
-    marginTop: 40,
-    fontWeight: '500',
-    fontFamily: theme.FONTS.titleFontFamily
-  },
-  subTitleStyle: {
-    fontSize: theme.FONTS.subtitleFontSize,
-    color: '#120C08',
-    fontWeight: '300',
-    fontFamily: theme.FONTS.subTitleFontFamily
-  },
-  logoStyle: {
-    width: '100%',
-    height: '100%',
-    shadowOffset:{width:8, height: 4},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 5,
+    width: width * 1
   },
   AnimatedView: {
     alignItems: 'center',
     flex: 1,
   },
-  radiustestview: {
-    marginTop: 50,
-    width: width * 0.5,
-    height: height * 0.25,
-    backgroundColor: theme.COLOURS.primary,
-    borderWidth: 2,
+  drawButtonStyle: {
+    width: width * 0.9,
+    height: height * 0.5,
+    alignItems:'center',
+    justifyContent: 'center',
+    margin: 'auto',
+    marginBottom: height * 0.02,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
-    shadowOffset: { width: 10, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    shadowColor: theme.BUTTONS.softButtonShadow,
+    opacity: 0.6,
+    shadowOffset: {width: 10, height: 10},
+    shadowOpacity: 0.8,
+    shadowColor: 'black',
+    backgroundColor: theme.COLOURS.primary
+  },
+  box2: {
+    flexDirection: 'row',
+  },
+  galleryButtonStyle: {
+    backgroundColor: theme.COLOURS.secondary,
+    width: width * 0.45,
+    height: height * 0.4,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5,
+    margin: 'auto',
+    marginBottom: height * 0.02,
+    borderRadius: theme.BUTTONS.smoothButtonRadius,
+    opacity: 0.6,
+    shadowOffset: {width: 10, height: 10},
+    shadowOpacity: 0.8,
+    shadowColor: 'black',
+    marginHorizontal: width * 0.02
+  }, 
+  settingsButtonStyle: {
+    backgroundColor: theme.COLOURS.tertiary,
+    width: width * 0.45,
+    height: height * 0.4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 'auto',
+    marginBottom: height * 0.02,
+    borderRadius: theme.BUTTONS.smoothButtonRadius,
+    opacity: 0.6,
+    shadowOffset: {width: 10, height: 10},
+    shadowOpacity: 0.8,
+    shadowColor: 'black',
+    marginHorizontal: width * 0.02
   },
+  paletteImageStyle: {
+    width: 200,
+    height: 200
+  },
+  box2ImageStyle: {
+    width: 120,
+    height: 120
+  },
+  buttonTextStyle: {
+    fontSize: theme.FONTS.subtitleFontSize,
+    fontFamily: theme.FONTS.formTitleFontFamily,
+    marginTop: 40
+  },
+  drawButtonTextStyle: {
+    fontFamily: theme.FONTS.usernameFontFamily,
+    fontSize: theme.FONTS.supertitleFontSize,
+  }
 });

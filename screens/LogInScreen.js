@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import FormField from '../components/FormField';
+import { logIn } from '../services/authLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -32,10 +33,15 @@ export default function LogInScreen( { navigation } ) {
         title={"Email"}
         placeholder={"Enter your Email"}
         keyboardType={"email-address"}
+        value={Email}
+        handleChangeText={text => setEmail(text)}
         />
         <FormField 
         title={"Password"}
-        placeholder={"Enter a Password"}/>
+        placeholder={"Enter a Password"}
+        value={Password}
+        handleChangeText={text => setPassword(text)}
+        />
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
           <Text>Haven't made an account yet?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')} style={styles.LinkView}>
@@ -45,7 +51,21 @@ export default function LogInScreen( { navigation } ) {
       </View>
       <DefaultButton 
         title={"Log in!"}
-        handlePress={() => console.log("Log in Button Pressed")}
+        handlePress={async () => {
+          console.log('Log in button pressed');
+          const result = await logIn(Email, Password);
+          // awaits the log in function and takes email and password as arguments
+          if (result.error) {// checks if log in process encounters any errors
+            console.log("Logging in error", result.error);// these errors are logged in console.
+            alert("Logging in error" + result.error);
+          } else {
+            console.log("User log in successful", result.user);
+            alert("Welcome back!");
+            setTimeout(() => {
+              navigation.navigate('HomeScreen')// navigates to the homescreen after validation routine is finished
+            }, 0);
+          }
+        }}
       />
       <StatusBar style="auto" />
     </SafeAreaView>
