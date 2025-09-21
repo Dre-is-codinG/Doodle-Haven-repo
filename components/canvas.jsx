@@ -16,7 +16,8 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 // these imports would be accessing the firebase storage library objects that would be used to save images
 import { getStorage, getDownloadURL, uploadString, ref } from "firebase/storage";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
-import { encode as btoa } from "base-64"
+import base64, { encode as encodeBase64 } from "react-native-base64";
+import { Buffer } from "buffer";
 
  const {height, width} = Dimensions.get('window')
 
@@ -92,9 +93,9 @@ const Canvas = () => {
 
   const redoFunction = () => {
     if (bin.length === 0) return;// checks if the bin is empty, and if true, exists the function
-    const restoredPath = bin[0]
+    const restoredPath = bin[bin.length - 1]
 /*  
-    by making a variable that directly stores the first path stored in the bin, it would allow me to easily access this value without 
+    by making a variable that directly stores the last path stored in the bin, it would allow me to easily access this value without 
     the need to directly reference it when attempting to mutate the states of the current paths array.
 */
     setPaths([...paths, restoredPath]);
@@ -102,7 +103,7 @@ const Canvas = () => {
     this function accesses the bin array and includes the first item in the bin array and includes it back to the paths array by using
     sets the state of paths to include this removed path.
 */
-    setbin(prev => prev.slice(1))
+    setbin(prev => prev.slice(0, -1))// this returns the last item in bin and removes it from the bin array
 /*
     The use of the prev, ensures that react native is working with the most recent state of the bin array, this would avoid any 
     unexpected or undefined errors in an event where the bin array is recieving a large amount of paths or is being rapidly mutated.
@@ -136,12 +137,13 @@ const Canvas = () => {
 // this function takes in the paths array, the width and height of each stroke created as arguments
     const svgPaths = paths // sets the variable svgPaths to the current state of the paths array
     .map(pathArray => // the map method loops through the path array and converts these arrays into concactinated strings
-      `<path d="${pathArray.join('')} 
+      `<path d="${pathArray.join('')}" 
         stroke="black"
         fill="transparent"
-        strokeWidth={5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        />
       `)// stores the styling and information about the strokes when being stored
     .join('');
 /* 
@@ -168,13 +170,13 @@ svgPaths is called.
       const storageRef = ref(storage, `Art/${fileName}`);// references the storage where the svg path would be stored
 
 // this converts the svgPaths string to base 64 svg string, which is compatible with react native
-      const base64SVG = btoa(svgPaths);
-      const dataURI = `data:image/svg+xml;base64,${base64SVG}`;
+      const base64SVG = Buffer.from(svgPaths, 'utf8').toString('base64');
+      const metaData = {contentType: 'image/svg+xml'};// directly defines the content as an svg
 
 
       // this storage includes the name of the file and the location in which the file would be stored in firestore db
-      await uploadString(storageRef, dataURI, 'data_url');// saves as a data url instead of raw content
-      // uploads the raw string to the referenced location in storageRef, this tells firebase it is an svg file type
+      await uploadString(storageRef, base64SVG, 'base64', metaData);
+      // tells firebase uploadedString is in base64 format
       const downloadURL = await getDownloadURL(storageRef);// returns the dounload url used by storage reference
 
       const db = getFirestore();
@@ -192,28 +194,30 @@ svgPaths is called.
   };
   
     return (
-      <ScrollView horizontal>
+      <View style={styles.mainViewStyling}>
         <View style={styles.container} onTouchMove={handleFingerMove} onTouchEnd={handleFingerMotionEnd}>
         <Svg style={styles.svgstyling}>
-          <Path
-          d = {paths.join(' ')} 
-          stroke="black"
-          fill="transparent" 
-          strokeWidth={5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          />
           {paths.map((item, index) => (
             <Path
             key={`path-${index}`}
-            d = {currentPath.join(' ')}
+            d = {item.join(' ')}
             stroke="black"
             fill="transparent"
-            strokeWidth={5}
+            strokeWidth={10}
             strokeLinecap="round"
             strokeLinejoin="round"
             />
           ))}
+          {currentPath.length > 0 && (
+            <Path 
+            d = {currentPath.join(' ')}
+            stroke="black"
+            fill="transparent"
+            strokeWidth={10}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            />
+          )}
         </Svg>
       </View>
       <ScrollView>
@@ -243,7 +247,17 @@ svgPaths is called.
             style={styles.buttonImageStyle}
             />
           </TouchableOpacity>
-          {/* conditional rendering of the two buttons when the save button is pressed */}
+          <TouchableOpacity 
+          onPress={clearFunction}
+          style={styles.functionButtons}>
+            <Image
+            source={require('../assets/images/broom.png')}
+            style={styles.buttonImageStyle}
+            />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+      {/* conditional rendering of the two buttons when the save button is pressed */}
           {showButton && (
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
@@ -260,50 +274,44 @@ svgPaths is called.
                 </TouchableOpacity>
             </View>
           )}
-          <TouchableOpacity 
-          onPress={clearFunction}
-          style={styles.functionButtons}>
-            <Image
-            source={require('../assets/images/broom.png')}
-            style={styles.buttonImageStyle}
-            />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </ScrollView>
+    </View>
   )
 }
 
 export default Canvas
 
 const styles = StyleSheet.create({
+  mainViewStyling: {
+    flexDirection: 'row'
+  },
   container: {
-    flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   svgstyling: {
-    height: height * 0.85,
+    height: height * 0.9,
     width: width * 0.7,
     borderWidth: 4,
     borderRadius: 10,
   },
   toolBarStyling: {
-    width: width * 0.73,
-    height: height * 0.3,
+    width: width * 0.15,
+    height: height * 1,
     borderWidth: 2,
     borderRadius: 10,
     backgroundColor: theme.COLOURS.primary,
     marginHorizontal: 20,
     flexWrap: 'wrap', // allows for the tool buttons to go to the next line if they do not fit in the toolbar box.
-    flexDirection: 'row', 
+    flexDirection: 'row',
+    position: 'relative',
+    zIndex: 1000
   },
   functionButtons: {
     width: width * 0.1,
     height: height * 0.2,
     borderWidth: 2,
     borderRadius: 30,
-    marginHorizontal: width * 0.04,
-    marginVertical: height * 0.05,
+    marginHorizontal: width * 0.02,
+    marginVertical: height * 0.02,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -312,12 +320,16 @@ const styles = StyleSheet.create({
     height: '50%'
   },
   optionalViewStyling: {
-  position: 'absolute',
-  bottom: -(height * 0.25),
-  left: (height * 0.68),
+  marginTop: 10,
   borderColor: '#000',
   borderWidth: 2,
   borderRadius: theme.BUTTONS.sharpButtonRadius,
+  padding: 5,
+  position: 'absolute',
+  top: height * 0.45,
+  right: width * 0.18,
+  zIndex: 1000,
+  backgroundColor: theme.COLOURS.primary
   },
   optionalButtonTextStyling: {
   fontFamily: theme.FONTS.formTitleFontFamily,
