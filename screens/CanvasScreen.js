@@ -15,8 +15,12 @@ rendered appropriately to fit any screen of any size or type.
 */
 export default function CanvasScreen() {
     useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
-        screenOrientation.lockAsync(screenOrientation.OrientationLock.LANDSCAPE_RIGHT);
-        return () => { screenOrientation.unlockAsync(); 
+        const lockScreenOrientation = async () => {
+            await screenOrientation.lockAsync(screenOrientation.OrientationLock.LANDSCAPE_RIGHT);
+        };
+        lockScreenOrientation();// async function is called
+        return () => { 
+            screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);  
     // tells react native to return the screen orientation to the default mode once the page is unloaded
         };
       }, []);

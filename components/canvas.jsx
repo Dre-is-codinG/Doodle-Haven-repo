@@ -13,11 +13,8 @@ import { Svg, Path } from "react-native-svg";
  Path object would allow me to track and record paths that are created as the user interacts with the Svg canvas component.
  */
 import { theme } from '../config/theme'; //imports theme object from config directory.
-// these imports would be accessing the firebase storage library objects that would be used to save images
-import { getStorage, getDownloadURL, uploadString, ref } from "firebase/storage";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
-import base64, { encode as encodeBase64 } from "react-native-base64";
-import { Buffer } from "buffer";
+import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { getFirestore, addDoc, collection } from 'firebase/firestore';
 
  const {height, width} = Dimensions.get('window')
 
@@ -136,62 +133,66 @@ const Canvas = () => {
   const createSVG = (paths, width, height) => {
 // this function takes in the paths array, the width and height of each stroke created as arguments
     const svgPaths = paths // sets the variable svgPaths to the current state of the paths array
-    .map(pathArray => // the map method loops through the path array and converts these arrays into concactinated strings
-      `<path d="${pathArray.join('')}" 
-        stroke="black"
-        fill="transparent"
-        stroke-width="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+      .filter(path => path.length > 0) // ensures that empty arrays are excluded from svgPath
+      .map(pathArray => 
+// the map method loops through the path array and converts these arrays into concactinated strings
+        `
+        <path
+          d="${pathArray.join(' ')}"
+          stroke="black"
+          fill="transparent"
+          stroke-width="10"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         />
       `)// stores the styling and information about the strokes when being stored
-    .join('');
+      .join('');
 /* 
-turns all the items into a singular string, this allows for the svg to be stored without being further 
-manipulated, and it would make it easier to recall the arrays 
+ turns all the items into a singular string, this allows for the svg to be stored without being further 
+ manipulated, and it would make it easier to recall the arrays 
 */
 
     return `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-      ${svgPaths}
-    </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+        ${svgPaths}
+      </svg>
     `;
 /* 
-svg text is stored using xmlns which tells servers that the format of this text in memory is svg and the created
-svgPaths is called.
+ svg text is stored using xmlns which tells servers that the format of this text in memory is svg and the created
+ svgPaths is called.
 */
+
   };
 
-  const saveAsSVG = async(paths, width, height) => {
-    try{
-      const svgPaths = createSVG(paths, width, height);// calls the svgPaths function created earlier
-      const storage = getStorage();// creates a variable that calls the firestore getStorage object
-      const fileName = `Art_${Date.now()}.svg`;// using backticks, i intend on saving all files with the Art_ prefix
-      const storageRef = ref(storage, `Art/${fileName}`);// references the storage where the svg path would be stored
 
-// this converts the svgPaths string to base 64 svg string, which is compatible with react native
-      const base64SVG = Buffer.from(svgPaths, 'utf8').toString('base64');
-      const metaData = {contentType: 'image/svg+xml'};// directly defines the content as an svg
+  const saveSVGtoFirebase = async (paths, width, height) => {
+// creating a filePath variable that holds the directory path alongside the file name
+    try {
+      const svgContent = createSVG(paths, width, height);
+      const fileName = `Art_${Date.now()}.svg`;
+// using backticks, i intend on saving all files with the Art_ prefix
+      const storage = getStorage(); // Make sure Firebase is initialized
+      const storageRef = ref(storage, `Art/${fileName}`);
 
-
-      // this storage includes the name of the file and the location in which the file would be stored in firestore db
-      await uploadString(storageRef, base64SVG, 'base64', metaData);
-      // tells firebase uploadedString is in base64 format
-      const downloadURL = await getDownloadURL(storageRef);// returns the dounload url used by storage reference
+      await uploadString(storageRef, svgContent, 'raw', { contentType: 'image/svg+xml' });
+      const downloadURL = await getDownloadURL(storageRef);
 
       const db = getFirestore();
-// this references an already existing firestore, where if none is present, creates a new instance in firestore.
-      await addDoc(collection(db, "gallery"), {// uses the collection reference
+// returns filepath, creating a file locally in the application's directory
+      await addDoc(collection(db, 'gallery'), {// uses the collection reference
         url: downloadURL,
-        type: "svg",
-        createdAt: new Date(),
-        width: width,
-        height: height
+        type: 'svg',
+        width,
+        height,
+        createdAt: new Date()
       });
-    } catch(err) {
-      console.error("Encountered error when trying to store svg, error: ", err)// throws any errors to the terminal
+
+      console.log('SVG saved to Firebase!');
+    } catch (err) {
+      console.error('Error saving SVG:', err);
     }
   };
+
   
     return (
       <View style={styles.mainViewStyling}>
@@ -262,7 +263,7 @@ svgPaths is called.
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
                 <TouchableOpacity
-                onPress={() => saveAsSVG(paths, width, height)}
+                onPress={() => saveSVGtoFirebase(paths, width, height)}
                 >
                   <Text style={styles.optionalButtonTextStyling}>Save art to gallery!</Text>
                 </TouchableOpacity>
@@ -326,8 +327,8 @@ const styles = StyleSheet.create({
   borderRadius: theme.BUTTONS.sharpButtonRadius,
   padding: 5,
   position: 'absolute',
-  top: height * 0.45,
-  right: width * 0.18,
+  top: height * 0.3,
+  right: width * 0.4,
   zIndex: 1000,
   backgroundColor: theme.COLOURS.primary
   },
