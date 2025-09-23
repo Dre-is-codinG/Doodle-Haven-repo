@@ -15,6 +15,9 @@ import { Svg, Path } from "react-native-svg";
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
+import base64 from 'react-native-base64';
+import * as FileSystem from 'expo-file-system';
+
 
  const {height, width} = Dimensions.get('window')
 
@@ -146,7 +149,8 @@ const Canvas = () => {
           stroke-linejoin="round"
         />
       `)// stores the styling and information about the strokes when being stored
-      .join('');
+      .join('')
+      .trim();
 /* 
  turns all the items into a singular string, this allows for the svg to be stored without being further 
  manipulated, and it would make it easier to recall the arrays 
@@ -164,17 +168,17 @@ const Canvas = () => {
 
   };
 
-
   const saveSVGtoFirebase = async (paths, width, height) => {
 // creating a filePath variable that holds the directory path alongside the file name
     try {
-      const svgContent = createSVG(paths, width, height);
+      const svgString = createSVG(paths, width, height);
       const fileName = `Art_${Date.now()}.svg`;
 // using backticks, i intend on saving all files with the Art_ prefix
-      const storage = getStorage(); // Make sure Firebase is initialized
-      const storageRef = ref(storage, `Art/${fileName}`);
 
-      await uploadString(storageRef, svgContent, 'raw', { contentType: 'image/svg+xml' });
+      const storage = getStorage(); // Make sure Firebase storage is initialized
+      const storageRef = ref(storage, `Art/${fileName}`);//references the location where the svg file would be stored.
+
+      await uploadString(storageRef, svgString, 'data_url', {contentType: 'image/svg+xml'});
       const downloadURL = await getDownloadURL(storageRef);
 
       const db = getFirestore();
@@ -193,7 +197,20 @@ const Canvas = () => {
     }
   };
 
-  
+    const saveSVGtoGallery = async (svgString) => {
+       try {
+        const fileUri = FileSystem.documentDirectory + `drawing-${Date.now()}.svg`;
+        const file = new FileSystem.File(fileUri);
+        await file.create();
+        await file.write(svgString);
+        return fileUri;
+      } catch (err) {
+        console.error("Error saving SVG:", err);
+        console.log("documentDirectory:", FileSystem.documentDirectory);
+        console.log("cacheDirectory:", FileSystem.cacheDirectory);
+      }
+    };
+
     return (
       <View style={styles.mainViewStyling}>
         <View style={styles.container} onTouchMove={handleFingerMove} onTouchEnd={handleFingerMotionEnd}>
@@ -263,7 +280,7 @@ const Canvas = () => {
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
                 <TouchableOpacity
-                onPress={() => saveSVGtoFirebase(paths, width, height)}
+                onPress={() => console.log("Art can't be saved in the moment :(")}
                 >
                   <Text style={styles.optionalButtonTextStyling}>Save art to gallery!</Text>
                 </TouchableOpacity>
