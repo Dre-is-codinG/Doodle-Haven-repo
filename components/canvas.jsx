@@ -16,7 +16,7 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 import base64 from 'react-native-base64';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 
 
  const {height, width} = Dimensions.get('window')
@@ -197,18 +197,19 @@ const Canvas = () => {
     }
   };
 
-    const saveSVGtoGallery = async (svgString) => {
-       try {
-        const fileUri = FileSystem.documentDirectory + `drawing-${Date.now()}.svg`;
-        const file = new FileSystem.File(fileUri);
-        await file.create();
-        await file.write(svgString);
-        return fileUri;
-      } catch (err) {
-        console.error("Error saving SVG:", err);
-        console.log("documentDirectory:", FileSystem.documentDirectory);
-        console.log("cacheDirectory:", FileSystem.cacheDirectory);
-      }
+    const saveSVGtoGallery = () => {
+// this function would work on saving a generated svg file to the cache memory, which can later be pushed to firebase
+       try {// using a try block, I can throw errors to the terminal if the function fails to save the svg file
+        const svgString = createSVG(paths, 10, 10);
+/* using the createSVG function, the paths array is converted to a single string */
+        const file = new File(Paths.cache, `Art_${Date.now()}.svg`);// saves a generic name for the svgFile
+// using the File object, it instantiates a new file that is saved in the cache directory
+        file.create();// uses the .create() method to create the file
+        file.write(svgString);// writes the svgString in the instantiated file
+        console.log(file.textSync());// returns the contents of the svgFile.svg
+       } catch (error) {
+        console.log(error);// throws any error encountered to the terminal
+       }
     };
 
     return (
@@ -280,7 +281,7 @@ const Canvas = () => {
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
                 <TouchableOpacity
-                onPress={() => console.log("Art can't be saved in the moment :(")}
+                onPress={() => saveSVGtoGallery()}
                 >
                   <Text style={styles.optionalButtonTextStyling}>Save art to gallery!</Text>
                 </TouchableOpacity>

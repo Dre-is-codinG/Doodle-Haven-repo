@@ -16,7 +16,7 @@
     "@shopify/react-native-skia": "2.2.12",
     "base-64": "^1.0.0",
     "buffer": "^6.0.3",
-    "expo": "^54.0.7",
+    "expo": "~54.0.10",
     "expo-linear-gradient": "~15.0.7",
     "expo-screen-orientation": "~9.0.7",
     "expo-status-bar": "~3.0.8",
