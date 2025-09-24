@@ -17,7 +17,7 @@ import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage'
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 import base64 from 'react-native-base64';
 import { File, Paths } from 'expo-file-system';
-
+import * as Expo from 'expo';
 
  const {height, width} = Dimensions.get('window')
 
@@ -168,34 +168,6 @@ const Canvas = () => {
 
   };
 
-  const saveSVGtoFirebase = async (paths, width, height) => {
-// creating a filePath variable that holds the directory path alongside the file name
-    try {
-      const svgString = createSVG(paths, width, height);
-      const fileName = `Art_${Date.now()}.svg`;
-// using backticks, i intend on saving all files with the Art_ prefix
-
-      const storage = getStorage(); // Make sure Firebase storage is initialized
-      const storageRef = ref(storage, `Art/${fileName}`);//references the location where the svg file would be stored.
-
-      await uploadString(storageRef, svgString, 'data_url', {contentType: 'image/svg+xml'});
-      const downloadURL = await getDownloadURL(storageRef);
-
-      const db = getFirestore();
-// returns filepath, creating a file locally in the application's directory
-      await addDoc(collection(db, 'gallery'), {// uses the collection reference
-        url: downloadURL,
-        type: 'svg',
-        width,
-        height,
-        createdAt: new Date()
-      });
-
-      console.log('SVG saved to Firebase!');
-    } catch (err) {
-      console.error('Error saving SVG:', err);
-    }
-  };
 
     const saveSVGtoGallery = () => {
 // this function would work on saving a generated svg file to the cache memory, which can later be pushed to firebase
@@ -207,6 +179,7 @@ const Canvas = () => {
         file.create();// uses the .create() method to create the file
         file.write(svgString);// writes the svgString in the instantiated file
         console.log(file.textSync());// returns the contents of the svgFile.svg
+        console.log(file.uri);
        } catch (error) {
         console.log(error);// throws any error encountered to the terminal
        }

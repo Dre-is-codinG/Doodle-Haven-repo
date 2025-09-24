@@ -69,6 +69,7 @@ loaded and is complete.
           <TouchableOpacity
           style={styles.galleryButtonStyle}
           activeOpacity={0.4}
+          onPress={() => {navigation.navigate('GalleryScreen')}}
           >
             <Image 
             source={require('../assets/images/image-gallery.png')}
