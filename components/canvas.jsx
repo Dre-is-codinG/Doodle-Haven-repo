@@ -18,7 +18,7 @@ import { getFirestore, addDoc, collection } from 'firebase/firestore';
 import base64 from 'react-native-base64';
 import { File, Paths } from 'expo-file-system';
 import * as Expo from 'expo';
-
+import ColourPicker from './ColourPicker';
  const {height, width} = Dimensions.get('window')
 
 const Canvas = () => {
@@ -30,6 +30,7 @@ const Canvas = () => {
 // the bin would be used to store sliced paths
   const [showButton, setShowButton] = useState(false);
 // this function would be used to create a state that determines if a button is visible
+  const [color, setColor] = useState("#41566cff");
 
 
   const handleFingerMove = (event) => {
@@ -169,24 +170,24 @@ const Canvas = () => {
   };
 
 
-    const saveSVGtoGallery = () => {
+    const saveSVGtoGallery = async () => {
 // this function would work on saving a generated svg file to the cache memory, which can later be pushed to firebase
-       try {// using a try block, I can throw errors to the terminal if the function fails to save the svg file
-        const svgString = createSVG(paths, 10, 10);
-/* using the createSVG function, the paths array is converted to a single string */
-        const file = new File(Paths.cache, `Art_${Date.now()}.svg`);// saves a generic name for the svgFile
-// using the File object, it instantiates a new file that is saved in the cache directory
-        file.create();// uses the .create() method to create the file
-        file.write(svgString);// writes the svgString in the instantiated file
-        console.log(file.textSync());// returns the contents of the svgFile.svg
-        console.log(file.uri);
-       } catch (error) {
-        console.log(error);// throws any error encountered to the terminal
-       }
+
+     const svgString = createSVG(paths, 10, 10);
+      try {
+      const file = new File(Paths.cache, `Art_${Date.now()}`);
+      file.create(); // can throw an error if the file already exists or no permission to create it
+      file.write(svgString);
+      console.log(file.textSync()); // Hello, world!
+      console.log(file.uri)
+    } catch (error) {
+      console.error(error);
+    }
     };
 
     return (
       <View style={styles.mainViewStyling}>
+        <ColourPicker color={color} onChange={setColor} />
         <View style={styles.container} onTouchMove={handleFingerMove} onTouchEnd={handleFingerMotionEnd}>
         <Svg style={styles.svgstyling}>
           {paths.map((item, index) => (
@@ -211,44 +212,46 @@ const Canvas = () => {
             />
           )}
         </Svg>
+
       </View>
-      <ScrollView>
-        <View style={styles.toolBarStyling}>
-          <TouchableOpacity 
-          style={styles.functionButtons}
-          onPress={undoFunction}
-          >
-            <Image
-            source={require('../assets/images/undo.png')}
-            style={styles.buttonImageStyle}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity 
-          onPress={redoFunction}
-          style={styles.functionButtons}>
-            <Image
-            source={require('../assets/images/redo.png')}
-            style={styles.buttonImageStyle}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity 
-          onPress={() => setShowButton(!showButton)}
-          style={styles.functionButtons}>
-            <Image
-            source={require('../assets/images/folder.png')}
-            style={styles.buttonImageStyle}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity 
-          onPress={clearFunction}
-          style={styles.functionButtons}>
-            <Image
-            source={require('../assets/images/broom.png')}
-            style={styles.buttonImageStyle}
-            />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        
+        <ScrollView>
+          <View style={styles.toolBarStyling}>
+            <TouchableOpacity 
+            style={styles.functionButtons}
+            onPress={undoFunction}
+            >
+              <Image
+              source={require('../assets/images/undo.png')}
+              style={styles.buttonImageStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={redoFunction}
+            style={styles.functionButtons}>
+              <Image
+              source={require('../assets/images/redo.png')}
+              style={styles.buttonImageStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={() => setShowButton(!showButton)}
+            style={styles.functionButtons}>
+              <Image
+              source={require('../assets/images/folder.png')}
+              style={styles.buttonImageStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={clearFunction}
+            style={styles.functionButtons}>
+              <Image
+              source={require('../assets/images/broom.png')}
+              style={styles.buttonImageStyle}
+              />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       {/* conditional rendering of the two buttons when the save button is pressed */}
           {showButton && (
             <View style={styles.optionalViewStyling}>
@@ -266,6 +269,8 @@ const Canvas = () => {
                 </TouchableOpacity>
             </View>
           )}
+          
+          
     </View>
   )
 }
@@ -278,6 +283,7 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "#fff",
+    marginLeft: width * 0.06
   },
   svgstyling: {
     height: height * 0.9,
@@ -287,7 +293,7 @@ const styles = StyleSheet.create({
   },
   toolBarStyling: {
     width: width * 0.15,
-    height: height * 1,
+    height: height * 1.25,
     borderWidth: 2,
     borderRadius: 10,
     backgroundColor: theme.COLOURS.primary,

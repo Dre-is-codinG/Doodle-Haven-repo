@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
+import { File, Directory } from 'expo-file-system';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -16,6 +17,8 @@ rendered appropriately to fit any screen of any size or type.
 
 
 export default function GalleryScreen({ navigation }) {
+
+  const [files, setFiles] = useState([]);
 
     const [showButton, setShowButton] = useState(false);
   
@@ -47,6 +50,20 @@ unexpected errors or rerenders. I am also using the console log callback, this i
 loaded and is complete.
 */
   }, []);
+
+//   useEffect(() => {
+//   const loadFiles = async () => {
+//     try {
+//       const dir = new Directory(FileSystem.documentDirectory);
+//       const fileObjects = await dir.getFiles(); // returns array of File objects
+//       setFiles(fileObjects); // You can map or display these as needed
+//     } catch (err) {
+//       console.log("Error reading gallery:", err);
+//     }
+//   };
+
+//   loadFiles();
+// }, []);
 
   return (
     <SafeAreaView style={styles.safeareastyle}>

@@ -80,6 +80,7 @@ loaded and is complete.
           <TouchableOpacity
           style={styles.settingsButtonStyle}
           activeOpacity={0.4}
+          onPress={() => {navigation.navigate('SettingsScreen')}}
           >
             <Image 
             source={require('../assets/images/settings.png')}
