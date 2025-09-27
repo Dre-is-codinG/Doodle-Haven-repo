@@ -19,7 +19,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView>
-      <ColourPicker color={color} onChange={setColor} />
+
     </SafeAreaView>
   )
 }

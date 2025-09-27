@@ -141,18 +141,18 @@ const Canvas = () => {
   const createSVG = (paths, width, height) => {
 // this function takes in the paths array, the width and height of each stroke created as arguments
     const svgPaths = paths // sets the variable svgPaths to the current state of the paths array
-      .filter(path => path.length > 0) // ensures that empty arrays are excluded from svgPath
-      .map(pathArray => 
+      .filter(item => item.path.length > 0) // ensures that empty arrays are excluded from svgPath
+      .map(item => 
 // the map method loops through the path array and converts these arrays into concactinated strings
         `
         <path
-          d="${pathArray.join(' ')}"
-          stroke="black"
-          fill="transparent"
-          stroke-width="10"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
+        d="${item.path.join(' ')}"
+        stroke="${item.color}"
+        fill="transparent"
+        stroke-width="${item.strokeWidth}"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
       `)// stores the styling and information about the strokes when being stored
       .join('')
       .trim();
