@@ -19,6 +19,8 @@ import base64 from 'react-native-base64';
 import { File, Paths } from 'expo-file-system';
 import * as Expo from 'expo';
 import ColourPicker from './ColourPicker';
+import Slider from '@react-native-community/slider'
+
  const {height, width} = Dimensions.get('window')
 
 const Canvas = () => {
@@ -31,7 +33,9 @@ const Canvas = () => {
   const [showButton, setShowButton] = useState(false);
 // this function would be used to create a state that determines if a button is visible
   const [color, setColor] = useState("#41566cff");
-
+// this function would be used to handle the state of the colours in the colour picker
+  const [strokeWidth, setStrokeWidth] = useState(10);
+// this function would handle the width of each stroke
 
   const handleFingerMove = (event) => {
     const newPath = [...currentPath];
@@ -65,7 +69,7 @@ const Canvas = () => {
  
   const handleFingerMotionEnd = () => {
     if (currentPath.length === 0) return;// checks if the currentPath is empty and if so, exists the function
-    setPaths([...paths, currentPath]);;// this changes the state of paths by including the the current path after the end of a line
+    setPaths([...paths, { path: currentPath, color, strokeWidth }]);;// this changes the state of paths by including the the current path after the end of a line
     console.log("currentPath array: ", currentPath)// this logs and returns each coordinate in the terminal, this would be used to check if the code works
     setcurrentPath([]);// reverts the currentPath array to 0, ending the creation of a line
   };
@@ -187,16 +191,30 @@ const Canvas = () => {
 
     return (
       <View style={styles.mainViewStyling}>
-        <ColourPicker color={color} onChange={setColor} />
+        <ColourPicker colour={color} setColour={setColor} />
+        <View style={styles.sliderView}>
+          <Slider
+          style={styles.sliderStyle}
+          minimumValue={1}
+          maximumValue={50}
+          step={1}
+          value={strokeWidth}
+          onValueChange={setStrokeWidth}
+          minimumTrackTintColor={color}
+          maximumTrackTintColor='#00000033'
+          thumbTintColor='#acacacff'
+          />
+        </View>
+        
         <View style={styles.container} onTouchMove={handleFingerMove} onTouchEnd={handleFingerMotionEnd}>
         <Svg style={styles.svgstyling}>
           {paths.map((item, index) => (
             <Path
             key={`path-${index}`}
-            d = {item.join(' ')}
-            stroke="black"
+            d = {item.path.join(' ')}
+            stroke={item.color}
             fill="transparent"
-            strokeWidth={10}
+            strokeWidth={item.strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
             />
@@ -204,9 +222,9 @@ const Canvas = () => {
           {currentPath.length > 0 && (
             <Path 
             d = {currentPath.join(' ')}
-            stroke="black"
+            stroke={color}
             fill="transparent"
-            strokeWidth={10}
+            strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
             />
@@ -337,5 +355,20 @@ const styles = StyleSheet.create({
   },
   innerOptionalButtonView: {
     borderBottomWidth : 2,
+  },
+  sliderView: {
+    marginTop: height * 0.2,
+    width: width * 0.01,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: width * -0.02
+    
+  },
+  sliderStyle: {
+    width: width * 0.2,
+    height: height * 0.05,
+    transform: [{ rotate: '-90deg' }],
+    
   }
 })

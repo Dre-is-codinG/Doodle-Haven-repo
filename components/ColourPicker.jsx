@@ -6,15 +6,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const {height, width} = Dimensions.get('window')
 
-const ColourPicker = ({ colour, onChange }) => {
-
+const ColourPicker = ({ colour, setColour }) => {
+    const [selectedColour, setSelectedColour] = useState('#000000ff');
     const [showButton, setShowButton] = useState(false);
     // this function would be used to create a state that determines if a button is visible
 
   return (
       <View>
         <TouchableOpacity
-        style={styles.functionButtons}
+        style={[styles.functionButtons, { backgroundColor: colour }]}
         onPress={() => setShowButton(!showButton)}
         />
         {showButton && (
@@ -22,7 +22,7 @@ const ColourPicker = ({ colour, onChange }) => {
           <ColorPicker
             color={colour}
             swatches={false}
-            onColorChange={onChange}
+            onColorChange={setColour}
             thumbSize={30}
             onColorChangeComplete={(color) => console.log('Color selected:', color)}
             style={styles.colourPickerStyle}

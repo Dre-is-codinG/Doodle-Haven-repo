@@ -15,7 +15,7 @@ application. By retrieving these dimensions, I can ensure that the objects and c
 rendered appropriately to fit any screen of any size or type.
 */
 export default function SettingsScreen() {
-    const [color, setColor] = useState("#44576cff");
+    const [color, setColor] = useState("#41566cff");
 
   return (
     <SafeAreaView>
