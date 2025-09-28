@@ -72,7 +72,7 @@ export default function SignUpScreen( { navigation } ) {
             // if no errors werre encountered, user's details is logged to console
             alert("User signed up successfully!"); // sends alert that no errors were encountered
             setTimeout(() => {// delays console log so that firebase validation routines can be fully finished
-              navigation.navigate('HomeScreen');// aftwards navigates user to homescreen.
+              navigation.navigate('AccessibilityScreen');// aftwards navigates user to homescreen.
             }, 0)
           }}
         }
