@@ -41,6 +41,6 @@ const styles = StyleSheet.create({
     },
     canvasViewStyle: {
         margin: 'auto',
-        marginTop: height * 0.05
+        marginTop: height * 0.051
     }
 })

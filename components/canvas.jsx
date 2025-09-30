@@ -16,7 +16,7 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 import base64 from 'react-native-base64';
-import { File, Paths } from 'expo-file-system';
+import { File, Paths, Directory } from 'expo-file-system';
 import * as Expo from 'expo';
 import ColourPicker from './ColourPicker';
 import Slider from '@react-native-community/slider'
@@ -179,14 +179,32 @@ const Canvas = () => {
 
      const svgString = createSVG(paths, 10, 10);
       try {
-      const file = new File(Paths.cache, `Art_${Date.now()}`);
-      file.create(); // can throw an error if the file already exists or no permission to create it
-      file.write(svgString);
+      const file = new File(Paths.cache, `Art_${Date.now()}.svg`);
+      await file.create(); // can throw an error if the file already exists or no permission to create it
+      await file.write(svgString);
       console.log(file.textSync()); // Hello, world!
       console.log(file.uri)
     } catch (error) {
       console.error(error);
     }
+    };
+
+    const moveToAppDirectory = async () => {
+// this function would be responsible for saving the created image as an image in the root directory of the file
+      try {// try and catch block, to document errors if encountered
+        const svgString = createSVG(paths, strokeWidth, strokeWidth)
+        const file = new File(Paths.document, `Art_${Date.now()}.svg`);// local variable of file created in document directory
+        await file.create();// instantiates the file 
+        await file.write(svgString);
+        console.log(file.uri); // console logs the file path of the created file
+        await file.move(Paths.document);
+// this part of the function handles moving the file in the cache to the created new directory
+        console.log(file.uri); 
+        await file.move(new Directory(Paths.document, 'Test-Folder'));// creates a new directory and moves the created file to it
+        console.log(file.uri);
+      } catch (error) {
+        console.error(error)
+      };
     };
 
     return (
@@ -281,7 +299,7 @@ const Canvas = () => {
                 </TouchableOpacity>
               </View>
                 <TouchableOpacity
-                onPress={() => console.log("Art has been exported")}
+                onPress={() => moveToAppDirectory()}
                 >
                   <Text style={styles.optionalButtonTextStyling}>Export art!</Text>
                 </TouchableOpacity>
