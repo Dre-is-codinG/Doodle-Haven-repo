@@ -9,7 +9,7 @@ import DefaultButton from '../components/DefaultButton';
 import ColourPicker from '../components/ColourPicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { sub } from '@shopify/react-native-skia';
-import { saveUserPreferences } from '../services/dbLogic';
+import { saveUserPreferences, userPreferenceTable, loadUserPreferences } from '../services/dbLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -31,15 +31,11 @@ export default function AccessibilityScreen({ navigation }) {
     const [soundPreference, setSoundPreference] = useState(0);
     const [visionCondition, setVisionCondition] = useState("");
     const [overallColourScheme, setOverallColourScheme] = useState("");
-    const [colourRecommendation, setColourRecommendation] = useState("");
-    const [dominantColour, setDominantColour] = useState("");
     const [colourBlindEffect, setColourBlindEffect] = useState(false);
     const [color, setColor] = useState("#ffffffff");
     // this function would be used to handle the state of the colours in the colour picker
-    const [showButton, setShowButton] = useState(false);
     const [showFavouriteColourButton, setShowFavouriteColourButton] = useState(false);
-    const [showRecommendationButton, setShowRecommendationButton] = useState(false);
-    const [showDominantColourButton, setShowDominantColourButton] = useState(false);
+
 
     const submit = () => {// handles the submission of values to the database
         const pref = {
@@ -55,13 +51,14 @@ export default function AccessibilityScreen({ navigation }) {
             soundPreference,
             visionCondition,
             overallColourScheme,
-            colourRecommendation,
-            dominantColour,
             colourBlindEffect
         }
         saveUserPreferences(pref);  // Saves the user's preferences to SQLite database
         console.log('Preferences saved:', pref);// console logs each preference to see if it saved correctly
-        // navigation.navigate('HomeScreen'); // Navigates to the home screen after saving the preferences
+        setTimeout(() => {
+              navigation.navigate('HomeScreen')
+              // navigates to the homescreen after preferences have been added to the db
+            }, 0);
     };
 
     useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
@@ -136,6 +133,7 @@ export default function AccessibilityScreen({ navigation }) {
             <Slider 
             maximumValue={100}
             minimumValue={0}
+            step={1}
             style={styles.slider}
             value={lightContrast}
             onValueChange={setLightContrast}
@@ -154,6 +152,7 @@ export default function AccessibilityScreen({ navigation }) {
             <Slider
             maximumValue={100}
             minimumValue={0}
+            step={1}
             style={styles.slider}
             value={backgroundWhiteNoise}
             onValueChange={setBackgroundWhiteNoise}
@@ -164,6 +163,7 @@ export default function AccessibilityScreen({ navigation }) {
             <Slider 
             maximumValue={100}
             minimumValue={0}
+            step={1}
             style={styles.slider}
             value={lightingIntensitySensitivity}
             onValueChange={setLightIntesitySensitivity}
@@ -182,6 +182,7 @@ export default function AccessibilityScreen({ navigation }) {
             <Slider 
             maximumValue={100}
             minimumValue={0}
+            step={1}
             style={styles.slider}
             value={soundPreference}
             onValueChange={setSoundPreference}
@@ -195,56 +196,15 @@ export default function AccessibilityScreen({ navigation }) {
                 onValueChange={setVisionCondition}
                 />
             </View>
+            
             <View style={styles.formItemView}>
-            <Text style={styles.formHeaderText}>chose recommended scheme</Text>
-            <TouchableOpacity 
-            style={[styles.functionButtons, { backgroundColor: colourRecommendation || '#fff' }]}
-            onPress={() => setShowRecommendationButton(!showRecommendationButton)}
-            />
-            {showRecommendationButton && (
-                <View style={styles.buttonView}>
-                    <ColorPicker 
-                    swatches={false}
-                    color={colourRecommendation}
-                    onColorChange={(colour) => {
-                        setColor(colourRecommendation)
-                        setColourRecommendation(colour)
-                    }}
-                    thumbSize={40}
-                    style={styles.colourPickerStyle}
-                    />
-                </View>
-            )}
-            </View>
-            <View style={styles.formItemView}>
-            <Text style={styles.formHeaderText}>Overall colour scheme</Text>
+            <Text style={styles.formHeaderText}>Choose a colour scheme</Text>
             <ColorPicker 
             style={styles.colourPicker}
             swatchesOnly = {true}
-            value={overallColourScheme}
-            onValueChange={setOverallColourScheme}
+            color={overallColourScheme}
+            onColorChange={setOverallColourScheme}
             />
-            </View>
-            <View style={styles.formItemView}>
-            <Text style={styles.formHeaderText}>Select Dominant colour</Text>
-            <TouchableOpacity 
-            style={[styles.functionButtons, { backgroundColor: dominantColour || '#fff' }]}
-            onPress={() => setShowDominantColourButton(!showDominantColourButton)}
-            />
-            {showDominantColourButton && (
-                <View style={styles.buttonView}>
-                    <ColorPicker 
-                    swatches={false}
-                    color={dominantColour}
-                    onColorChange={(colour) => {
-                        setColor(dominantColour)
-                        setDominantColour(colour)
-                    }}
-                    thumbSize={40}
-                    style={styles.colourPickerStyle}
-                    />
-                </View>
-            )}
             </View>
             <View style={styles.switchAndTextView}>
                 <Text style={styles.formHeaderText}>Colour Blind effect</Text>
@@ -340,5 +300,16 @@ const styles = StyleSheet.create({
     borderColor: theme.COLOURS.tertiary,
     marginVertical: height * 0.02,
     justifyContent: 'center'
+  },
+  recommendedColourButton: {
+    width : width * 0.1,
+    height: height * 0.05,
+    borderRadius: theme.BUTTONS.defaultButtonRadius * 100,
+    borderWidth: theme.BUTTONS.defaultButtonBorderWidth,
+    marginHorizontal: width * 0.01,
+    marginVertical: height * 0.01
+  },
+  recommendedButtonView: {
+    flexDirection: 'row'
   }
 })

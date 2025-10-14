@@ -19,7 +19,6 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView>
-
     </SafeAreaView>
   )
 }
