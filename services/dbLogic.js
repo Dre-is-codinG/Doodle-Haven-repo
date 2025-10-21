@@ -1,4 +1,6 @@
-import database from "./database";
+import database from './database';
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 export const userPreferenceTable = async () => {// creates an instance of the user preference table
     await database.transaction(// creates a table and stores each field with its corresponding data type
@@ -8,12 +10,12 @@ export const userPreferenceTable = async () => {// creates an instance of the us
                 LastName TEXT NOT NULL,
                 DateOfBirth TEXT NOT NULL,
                 favouriteColour TEXT NOT NULL,
-                lightContrast TEXT,
+                lightContrast INTEGER,
                 disableFlashingLights INTEGER,
                 backgroundWhiteNoise INTEGER,
-                lightingIntensitySensitivity TEXT,
+                lightingIntensitySensitivity INTEGER,
                 animationStyle TEXT,
-                soundPreference TEXT,
+                soundPreference INTEGER,
                 visionCondition INTEGER,
                 overallColourScheme TEXT,
                 colourBlindEffect INTEGER
@@ -39,9 +41,9 @@ export const saveUserPreferences = async (pref) => {
         pref.favouriteColour,
         pref.lightContrast,
         pref.disableFlashingLights ? 1 : 0,
-        pref.backgroundWhiteNoise ? 1 : 0,
+        pref.backgroundWhiteNoise,
         pref.lightingIntensitySensitivity,
-        pref.animationStyle,
+        pref.animationStyle ? 1 : 0,
         pref.soundPreference,
         pref.visionCondition ? 1 : 0,
         pref.overallColourScheme,
@@ -64,3 +66,43 @@ export const loadUserPreferences = async () => {
 };
 
 
+export const exportDatabase = async () => {
+  try {
+    const dbUri = `${FileSystem.documentDirectory}SQLite/Doodle-Haven.db`;
+// this variable holds the URI of the document directory
+    const fileInfo = await FileSystem.getInfoAsync(dbUri);
+    if (!fileInfo.exists) {// checks if the .db file exists, if not, returns a messaege
+      console.log("Database file does not exist yet");
+      return;
+    };
+
+    const canShare = await Sharing.isAvailableAsync();
+    if (canShare) {
+      console.log("Database path:", dbUri);
+      await Sharing.shareAsync(dbUri);
+      console.log("Database exported successfully!");
+    } else {
+      console.log("Sharing not available on this platform");
+    };
+  } catch (error) {
+    console.log("Error exporting database: ", error);
+  }
+};
+
+export const dumpDatabaseContent = async () => {
+  try {
+    const rows = await (await database).getAllAsync(
+      'SELECT * FROM userPreferences;'
+    );
+    console.log("--- DATABASE CONTENT ---");
+    if (rows.length == 0) {
+      console.log("Table is empty!");
+    } else {
+      console.log(rows);
+      console.log("----- END -----");
+      return rows;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}

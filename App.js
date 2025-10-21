@@ -12,6 +12,7 @@ import GalleryScreen from "./screens/GalleryScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import AccessibilityScreen from "./screens/AccessibilityScreen";
 import * as Font from 'expo-font';
+import { SettingsProvider } from "./services/globalSettings"
 
 const Stack = createNativeStackNavigator();
 
@@ -44,19 +45,21 @@ export default function App() {
   }
 
   return(
-    <NavigationContainer>
-      <StatusBar style="auto" />
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-        <Stack.Screen name="LogInScreen" component={LogInScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{gestureEnabled: false}} />
-        <Stack.Screen name="CanvasScreen" component={CanvasScreen} />
-        <Stack.Screen name="GalleryScreen" component={GalleryScreen} />
-        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-        <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen} options={{gestureEnabled: false}} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SettingsProvider>
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+          <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+          <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+          <Stack.Screen name="LogInScreen" component={LogInScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} options={{gestureEnabled: false}} />
+          <Stack.Screen name="CanvasScreen" component={CanvasScreen} />
+          <Stack.Screen name="GalleryScreen" component={GalleryScreen} />
+          <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+          <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen} options={{gestureEnabled: false}} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SettingsProvider>
   )
 }

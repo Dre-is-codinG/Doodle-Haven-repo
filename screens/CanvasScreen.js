@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
+import { loadLastDrawing } from '../services/drawingLogic'
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -14,6 +15,19 @@ application. By retrieving these dimensions, I can ensure that the objects and c
 rendered appropriately to fit any screen of any size or type.
 */
 export default function CanvasScreen() {
+
+    const [paths, setPaths] = useState([]); // handles the state of the called paths
+
+    useEffect(() => {
+// ensures that the last paths are fetched when the canvas screen is first loaded
+        const fetchPaths = async () => {
+            const lastPaths = await loadLastDrawing();
+            setPaths(lastPaths);// sets the state of paths to the last paths
+        };
+
+        fetchPaths();
+    }, []);// ensures the function runs once the screen is called
+
     useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
         const lockScreenOrientation = async () => {
             await screenOrientation.lockAsync(screenOrientation.OrientationLock.LANDSCAPE_RIGHT);
@@ -27,7 +41,7 @@ export default function CanvasScreen() {
   return (
     <SafeAreaView style={styles.safeAreaStyle}>
         <View style={styles.canvasViewStyle}>
-            <Canvas />
+            <Canvas  initialPaths={paths} />
         </View>
         
     </SafeAreaView>
@@ -41,6 +55,6 @@ const styles = StyleSheet.create({
     },
     canvasViewStyle: {
         margin: 'auto',
-        marginTop: height * 0.05
+        marginTop: height * 0.02
     }
 })

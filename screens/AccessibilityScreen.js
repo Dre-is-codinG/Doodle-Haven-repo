@@ -8,8 +8,7 @@ import ColorPicker from 'react-native-wheel-color-picker';
 import DefaultButton from '../components/DefaultButton';
 import ColourPicker from '../components/ColourPicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { sub } from '@shopify/react-native-skia';
-import { saveUserPreferences, userPreferenceTable, loadUserPreferences } from '../services/dbLogic';
+import { saveUserPreferences, userPreferenceTable, loadUserPreferences, exportDatabase, dumpDatabaseContent } from '../services/dbLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -36,7 +35,6 @@ export default function AccessibilityScreen({ navigation }) {
     // this function would be used to handle the state of the colours in the colour picker
     const [showFavouriteColourButton, setShowFavouriteColourButton] = useState(false);
 
-
     const submit = () => {// handles the submission of values to the database
         const pref = {
             FirstName,
@@ -54,6 +52,8 @@ export default function AccessibilityScreen({ navigation }) {
             colourBlindEffect
         }
         saveUserPreferences(pref);  // Saves the user's preferences to SQLite database
+        // dumpDatabaseContent();
+        // exportDatabase();
         console.log('Preferences saved:', pref);// console logs each preference to see if it saved correctly
         setTimeout(() => {
               navigation.navigate('HomeScreen')
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     },
     switch:{
         flex: 1,
-        marginLeft: width * 0.2
+        marginLeft: width * 0.1
     },
     colourPicker: {
         marginBottom: height * 0.03,
