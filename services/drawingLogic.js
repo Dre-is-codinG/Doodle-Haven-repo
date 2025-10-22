@@ -1,4 +1,4 @@
-import { db } from "../lib/firebaseConfig";
+import { db, auth } from "../lib/firebaseConfig";
 import { 
     addDoc,  
     collection, 
@@ -14,9 +14,15 @@ export const savePathsToDB = async (paths) => {
  this accepts the arguments that would be used to both link the user to the drawing as well as the 
  properties of the paths to the drawing in the firestore database
 */
+    const userId = auth.currentUser.uid;
+// this variable would be used to store the current user's user id which would be accessed later
     try {
-        await addDoc(collection(db, "Paths"), {
+        await addDoc(collection(db, "users", userId, "Paths"), {
     // creates a document that stores the following in a .json format in the collection
+/* 
+this would create a sub collection in my db in the users collection that 
+would store paths in the appropriate user id
+*/
             paths,
             createdAt: serverTimestamp(),
         });
@@ -29,7 +35,9 @@ export const savePathsToDB = async (paths) => {
 
 export const loadLastDrawing = async () => {
 // this async function would be used to load the last made drawing
-    const q = query(collection(db, "Paths"), orderBy("createdAt", "desc"), limit(1));
+
+    const userId = auth.currentUser.uid; // stores the currently logged in user's userId
+    const q = query(collection(db, "users", userId, "Paths"), orderBy("createdAt", "desc"), limit(1));
 /*
     this querries the collection, by order of descending order. it is important to order the dates
     in descending order in order to get the most recent date, and with a limit of 1, limits the 

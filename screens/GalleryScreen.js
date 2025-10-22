@@ -1,12 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Animated, TouchableOpacity, Button } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
-import Canvas from '../components/canvas'; //imports canvas component from component directory.
-import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
-import { File, Directory } from 'expo-file-system';
+import { auth } from '../lib/firebaseConfig'
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -20,7 +18,7 @@ export default function GalleryScreen({ navigation }) {
 
   const [files, setFiles] = useState([]);
 
-    const [showButton, setShowButton] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   
   useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
     screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
@@ -51,19 +49,17 @@ loaded and is complete.
 */
   }, []);
 
-//   useEffect(() => {
-//   const loadFiles = async () => {
-//     try {
-//       const dir = new Directory(FileSystem.documentDirectory);
-//       const fileObjects = await dir.getFiles(); // returns array of File objects
-//       setFiles(fileObjects); // You can map or display these as needed
-//     } catch (err) {
-//       console.log("Error reading gallery:", err);
-//     }
-//   };
-
-//   loadFiles();
-// }, []);
+  const getuID = () => {
+// this function retrieves the current user's uid.
+    if (auth.currentUser) {
+// the currentUser method allows me to check if a user is currently logged into the application 
+      alert(`Current UserId: ${auth.currentUser.uid}`);
+      console.log("User UID:", auth.currentUser.uid);
+    } else {
+      alert("No user is currently logged in! ☹️");
+      console.log("No one logged in! ");
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safeareastyle}>
@@ -91,7 +87,8 @@ loaded and is complete.
                 </View>
             )}
         </View>
-        
+        <Button onPress={getuID} title='Retrieve UID'/>
+
       </Animated.View>
       <StatusBar style="auto" />
     </SafeAreaView>

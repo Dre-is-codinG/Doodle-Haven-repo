@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: theme.FONTS.supertitleFontSize,
     color: theme.COLOURS.quaternary,
-    marginTop: 50,
+    marginTop: height * 0.01,
     fontWeight: '500',
     fontFamily: 'ClassicComic'
   },
