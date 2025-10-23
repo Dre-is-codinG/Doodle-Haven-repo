@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Animated, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Animated, TouchableOpacity, Button, ScrollView } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
-import { auth } from '../lib/firebaseConfig'
+import ImagePreview from '../components/imagePreview';
+import { liveUpdateGallery } from '../services/drawingLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -15,11 +16,9 @@ rendered appropriately to fit any screen of any size or type.
 
 
 export default function GalleryScreen({ navigation }) {
-
-  const [files, setFiles] = useState([]);
-
-  const [showButton, setShowButton] = useState(false);
   
+  const [art, setArt] = useState([]);
+
   useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
     screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
     return () => { screenOrientation.unlockAsync(); 
@@ -49,46 +48,35 @@ loaded and is complete.
 */
   }, []);
 
-  const getuID = () => {
-// this function retrieves the current user's uid.
-    if (auth.currentUser) {
-// the currentUser method allows me to check if a user is currently logged into the application 
-      alert(`Current UserId: ${auth.currentUser.uid}`);
-      console.log("User UID:", auth.currentUser.uid);
-    } else {
-      alert("No user is currently logged in! ☹️");
-      console.log("No one logged in! ");
-    }
-  }
+  useEffect(() => {
+// this handles real time updates in the library by defining the state of art
+    const disconnect = liveUpdateGallery(setArt);
+    return () => disconnect();
+  }, []);// this function would only be called once the screen is called and fully rendered.
 
   return (
     <SafeAreaView style={styles.safeareastyle}>
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
-        <Text style={styles.titleStyle}>Gallery</Text>
-        <Text style={styles.subTitleStyle}>Create your first image!</Text>
-        <View style={styles.imagesView}>
-            <TouchableOpacity
-            style={styles.addButtonStyle}
-            activeOpacity={0.2}
-            onPress={() => setShowButton(!showButton)}
-            >
-                <Text style={styles.addButtonTextStyle}>+</Text>
-            </TouchableOpacity>
-            {/* conditional rendering of the two buttons when the save button is pressed */}
-            {showButton && (
-                <View>
-                    <TouchableOpacity
-                style={styles.addButtonStyle}
-                activeOpacity={0.2}
-                onPress={() => setShowButton(!showButton)}
-                >
-                    <Text style={styles.addButtonTextStyle}>+</Text>
-                </TouchableOpacity>
-                </View>
-            )}
+        <View style={styles.titleView}>
+          <Text style={styles.titleStyle}>Gallery</Text>
         </View>
-        <Button onPress={getuID} title='Retrieve UID'/>
-
+        <ScrollView contentContainerStyle={styles.artContainer}>
+          {art.length > 0 ? (// this teniary conditional prompt checks if the art array state is 0
+            art.map((drawing) => (
+// this continuously loops through the drawings in the database and carries out real time updates 
+              <ImagePreview 
+              key={drawing.id}// returns a unique id for each mapped drawing
+              paths={drawing.paths || [] } // holds the properties of each drawing
+              />
+            ))
+          ):(
+/*
+if there are no paths in the array it returns text informing the 
+user that there are no drawings saved 
+*/
+            <Text>Start drawing!, this place is empty 🌵...</Text>
+          )}
+        </ScrollView>
       </Animated.View>
       <StatusBar style="auto" />
     </SafeAreaView>
@@ -98,46 +86,28 @@ loaded and is complete.
 const styles = StyleSheet.create({
   safeareastyle: {
     flex: 1,
-    backgroundColor: theme.COLOURS.background,
+    backgroundColor: theme.COLOURS.innerbackground,
     alignItems: 'center',
     justifyContent: 'center'
   },
   titleStyle: {
     fontSize: theme.FONTS.supertitleFontSize,
-    color: '#120C08',
-    marginTop: 40,
+    color: "black",
     fontWeight: '500',
-    fontFamily: theme.FONTS.titleFontFamily
+    fontFamily: theme.FONTS.formTitleFontFamily
   },
-  subTitleStyle: {
-    fontSize: theme.FONTS.titleFontSize,
-    color: '#120C08',
-    fontWeight: '300',
-    fontFamily: theme.FONTS.subTitleFontFamily
+  titleView: {
+    marginVertical: height * 0.02,
+    borderBottomColor: theme.COLOURS.quaternary,
+    borderBottomWidth: 8,
+    width: width * 1
   },
   AnimatedView: {
     alignItems: 'center',
     flex: 1,
   },
-  addButtonStyle: {
-    borderColor: theme.COLOURS.quinary,
-    borderWidth: theme.BUTTONS.defaultButtonBorderWidth,
-    width: width * 0.4,
-    height: height * 0.2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: theme.BUTTONS.smoothButtonRadius,
-    marginTop: height * 0.02,
-    backgroundColor: theme.COLOURS.innerbackground,
-    marginHorizontal: width * 0.04
-  },
-  addButtonTextStyle: {
-    fontSize: theme.FONTS.supertitleFontSize,
-    fontFamily: theme.FONTS.titleFontFamily,
-    color: theme.COLOURS.secondary
-  },
-  imagesView: {
-    flexDirection: 'row',
-    flexWrap: 'wrap'
+  artContainer: {
+    flexDirection: 'column',
+    width: width * 0.9
   }
 });

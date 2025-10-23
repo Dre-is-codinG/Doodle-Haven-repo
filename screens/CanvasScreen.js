@@ -7,6 +7,7 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import { loadLastDrawing } from '../services/drawingLogic'
+import { center } from '@shopify/react-native-skia';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -17,12 +18,15 @@ rendered appropriately to fit any screen of any size or type.
 export default function CanvasScreen() {
 
     const [paths, setPaths] = useState([]); // handles the state of the called paths
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
 // ensures that the last paths are fetched when the canvas screen is first loaded
         const fetchPaths = async () => {
+            setIsLoading(true);// triggers the loading state when fetching the paths
             const lastPaths = await loadLastDrawing();
             setPaths(lastPaths);// sets the state of paths to the last paths
+            setIsLoading(false)// once the paths is loaded the loading screen is removed
         };
 
         fetchPaths();
@@ -40,10 +44,19 @@ export default function CanvasScreen() {
       }, []);
   return (
     <SafeAreaView style={styles.safeAreaStyle}>
-        <View style={styles.canvasViewStyle}>
-            <Canvas  initialPaths={paths} />
-        </View>
-        
+        {isLoading ? (
+            <View style={styles.loadingView}>
+                <Image 
+                source={require('../assets/images/loading-bar.png')}
+                style ={styles.loadingImage}
+                />
+            </View>
+        ) : (
+            <View style={styles.canvasViewStyle}>
+                <Canvas initialPaths={paths} />
+            </View>
+        )
+    }
     </SafeAreaView>
   )
 }
@@ -56,5 +69,16 @@ const styles = StyleSheet.create({
     canvasViewStyle: {
         margin: 'auto',
         marginTop: height * 0.02
+    },
+    loadingImage: {
+        width: '100%',
+        height: '100%'
+    },
+    loadingView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: width * 1,
+        height: height * 1
     }
 })

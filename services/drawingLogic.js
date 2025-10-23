@@ -7,7 +7,17 @@ import {
     orderBy,
     limit,
     getDocs, 
+    onSnapshot,
+    doc
 } from "firebase/firestore"
+
+
+/**
+ * 
+ * @param {function} updateGallery - auto update drawings to gallery
+ * @returns {function} closeConnection - closes connection to the firebase firstore db
+ */
+
 
 export const savePathsToDB = async (paths) => {
 /*
@@ -55,4 +65,25 @@ export const loadLastDrawing = async () => {
         alert("No drawings yet 🌵, start drawing! 🎨")
         return [];
     }
+};
+
+export const liveUpdateGallery = (updateGallery) => {
+// this function live updates drawings to the gallery
+    const currentUser = auth.currentUser;// defines the current user
+
+    const drawing = collection(db, "users", currentUser.uid, "Paths");
+// this function defines the location in the firestore db which is the "Paths" subcollection
+    const qry = query(drawing, orderBy("createdAt", "desc"));
+// this querry applies a reverse order, ordering drawins created from the most recent to the first
+
+    const closeConnection = onSnapshot(qry, (data) => {
+// this function handles real time querrying for the firebase and updating the gallery
+        const image = data.docs.map((doc) => ({
+            imageid: doc.id,// holds the document id of each drawing
+            ...doc.data(),// separates each drawing (document) into its individual object
+        })
+    );
+    updateGallery(image);// creates a react native state for the closeConnection object
+    } )
+    return closeConnection;
 };
