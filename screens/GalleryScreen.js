@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Animated, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Animated, TouchableOpacity, Button, ScrollView, ImageBackground } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -55,7 +55,10 @@ loaded and is complete.
   }, []);// this function would only be called once the screen is called and fully rendered.
 
   return (
-    <SafeAreaView style={styles.safeareastyle}>
+    <ImageBackground 
+    style={styles.safeareastyle}
+    source={require('../assets/images/main.png')}
+    >
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
         <View style={styles.titleView}>
           <Text style={styles.titleStyle}>Gallery</Text>
@@ -79,7 +82,7 @@ user that there are no drawings saved
         </ScrollView>
       </Animated.View>
       <StatusBar style="auto" />
-    </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -94,7 +97,8 @@ const styles = StyleSheet.create({
     fontSize: theme.FONTS.supertitleFontSize,
     color: "black",
     fontWeight: '500',
-    fontFamily: theme.FONTS.formTitleFontFamily
+    fontFamily: theme.FONTS.formTitleFontFamily,
+    marginTop: height * 0.05,
   },
   titleView: {
     marginVertical: height * 0.02,

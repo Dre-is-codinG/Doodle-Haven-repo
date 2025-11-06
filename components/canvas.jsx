@@ -246,7 +246,7 @@ const Canvas = ({ initialPaths }) => {
           <Slider
           style={styles.sliderStyle}
           minimumValue={1}
-          maximumValue={50}
+          maximumValue={100}
           step={1}
           value={strokeWidth}
           onValueChange={setStrokeWidth}

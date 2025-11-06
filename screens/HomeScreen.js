@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
+import { backgroundMusic } from '../services/sound';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -46,6 +47,20 @@ unexpected errors or rerenders. I am also using the console log callback, this i
 loaded and is complete.
 */
   }, []);
+
+  useEffect(() => {
+    let sound;
+
+    async function playBackgroundMusic() {
+      sound = await backgroundMusic(require('../assets/sounds/piano-loop.mp3'));
+    }
+    playBackgroundMusic();
+    return () => {
+      if (sound) {
+        sound.stopAsync();
+        sound.unloadAsync();
+      }
+  }}, []);
 
   return (
 
@@ -119,7 +134,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowColor: 'black',
-    backgroundColor: theme.COLOURS.primary
+    backgroundColor: theme.COLOURS.primary,
+    borderWidth: 5
   },
   box2: {
     flexDirection: 'row',
@@ -137,7 +153,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowColor: 'black',
-    marginHorizontal: width * 0.02
+    marginHorizontal: width * 0.02,
+    borderWidth: 5
   }, 
   settingsButtonStyle: {
     backgroundColor: theme.COLOURS.tertiary,
@@ -152,7 +169,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowColor: 'black',
-    marginHorizontal: width * 0.02
+    marginHorizontal: width * 0.02,
+    borderWidth: 5
   },
   paletteImageStyle: {
     width: 200,

@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Switch, Dimensions, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Switch, Dimensions, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React,{ useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as screenOrientation from 'expo-screen-orientation';
@@ -18,15 +18,21 @@ rendered appropriately to fit any screen of any size or type.
 
 export default function SettingsScreen() {
   // the following control the states of the preferences
-      const { settings, changeSetting } = useSettings();
+      const { settings, changeSetting, manualSave, isloading } = useSettings();
       // this calls the custom useSettings() hook to handle states of each setting
       const [color, setColor] = useState("#ffffffff");
       // this function would be used to handle the state of the colours in the colour picker
       const [showFavouriteColourButton, setShowFavouriteColourButton] = useState(false);
   
-      const submit = () => {// handles the submission of values to the database
-        console.log(settings)
-      };
+      if (isloading) {
+// ensures that while the settings are still loading, a loading screen is displayed
+        return(
+          <SafeAreaView style={styles.loadingView}>
+            <ActivityIndicator size={'large'} color={theme.COLOURS.tertiary}/>
+            <Text style={styles.loadingText}>Loading...</Text>
+          </SafeAreaView>
+        );
+      }
 
       useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
           const lockScreenOrientation = async () => {
@@ -39,21 +45,11 @@ export default function SettingsScreen() {
           };
         }, []);
 
-      const {// deconstructs the global states and assigns them to the "settings" variable
-          FirstName,
-          LastName,
-          dob,
-          favouriteColour,
-          lightContrast,
-          disableFlashingLights,
-          backgroundWhiteNoise,
-          lightingIntensitySensitivity,
-          animationStyle,
-          soundPreference,
-          visionCondition,
-          overallColourScheme,
-          colourBlindEffect,
-      } = settings;
+      const submit = async () => {// handles the submission of values to the database
+        manualSave()
+        alert("Preferences saved and ready to go! ⚙️👍")
+        console.log(settings)
+      };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -135,9 +131,9 @@ export default function SettingsScreen() {
             <View style={styles.formItemView}>
             <Text style={styles.formHeaderText}>Volume of White noise</Text>
             <Slider
-            maximumValue={100}
+            maximumValue={1}
             minimumValue={0}
-            step={1}
+            step={0.1}
             style={styles.slider}
             value={settings.backgroundWhiteNoise}
             onValueChange={(value) => changeSetting('backgroundWhiteNoise', value)}
@@ -165,9 +161,9 @@ export default function SettingsScreen() {
             <View style={styles.formItemView}>
             <Text style={styles.formHeaderText}>Sound Volume</Text>
             <Slider 
-            maximumValue={100}
+            maximumValue={1}
             minimumValue={0}
-            step={1}
+            step={0.1}
             style={styles.slider}
             value={settings.soundPreference}
             onValueChange={(value) => changeSetting('soundPreference', value)}
@@ -296,5 +292,17 @@ const styles = StyleSheet.create({
   },
   recommendedButtonView: {
     flexDirection: 'row'
+  },
+  loadingView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.COLOURS.innerbackground
+  },
+  loadingText: {
+    fontFamily: theme.FONTS.usernameFontFamily,
+    fontSize: theme.FONTS.miniregularFontSize,
+    color: theme.COLOURS.quaternary,
+    marginTop: height * 0.02
   }
 })

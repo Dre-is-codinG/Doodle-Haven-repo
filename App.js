@@ -20,6 +20,7 @@ export default function App() {
   const [isFontsLoaded, setFontsLoaded] = useState(false);
 // this would be used to check if the fonts have been loaded before rendering the rest of the screen
 
+
   useEffect(() => {
     async function loadFonts() {
       await Font.loadAsync({
@@ -39,6 +40,7 @@ export default function App() {
       setFontsLoaded(true);// sets the state of isFontsLoaded to true after the fonts have been loaded
     }
     loadFonts();
+
   }, []);// the empty array makes sure that the function is only called once when the page is loaded.
   if (!isFontsLoaded) {
     return null;// if the fonts have not been loaded, it would return a null value and not render anything on the screen.
