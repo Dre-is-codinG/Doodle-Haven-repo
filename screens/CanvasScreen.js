@@ -43,7 +43,9 @@ export default function CanvasScreen() {
         };
       }, []);
   return (
-    <SafeAreaView style={styles.safeAreaStyle}>
+    <ImageBackground 
+    source={require('../assets/images/Canvas Page background.png')}
+    style={styles.safeAreaStyle}>
         {isLoading ? (
             <View style={styles.loadingView}>
                 <Image 
@@ -57,7 +59,7 @@ export default function CanvasScreen() {
             </View>
         )
     }
-    </SafeAreaView>
+    </ImageBackground>
   )
 }
 
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     },
     canvasViewStyle: {
         margin: 'auto',
-        marginTop: height * 0.02
+        marginTop: height * 0.08
     },
     loadingImage: {
         width: '100%',

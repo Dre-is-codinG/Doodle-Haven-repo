@@ -15,7 +15,7 @@ import { Svg, Path } from "react-native-svg";
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import ColourPicker from './ColourPicker';
 import Slider from '@react-native-community/slider'
-import { savePathsToDB, loadLastDrawing } from "../services/drawingLogic"
+import { savePathsToDB, loadLastDrawing, saveHappyTestData, saveSadTestData } from "../services/drawingLogic"
 import { Paths, File, Directory } from "expo-file-system"
 import * as Sharing from "expo-sharing"
 
@@ -221,24 +221,6 @@ const Canvas = ({ initialPaths }) => {
     }
     };
 
-//     const moveToAppDirectory = async () => {
-// // this function would be responsible for saving the created image as an image in the root directory of the file
-//       try {// try and catch block, to document errors if encountered
-//         const svgString = createSVG(paths, strokeWidth, strokeWidth)
-//         const file = new File(Paths.document, `Art_${Date.now()}.svg`);// local variable of file created in document directory
-//         await file.create();// instantiates the file 
-//         await file.write(svgString);
-//         console.log(file.uri); // console logs the file path of the created file
-//         await file.move(Paths.document);
-// // this part of the function handles moving the file in the cache to the created new directory
-//         console.log(file.uri); 
-//         await file.move(new Directory(Paths.document, 'Test-Folder'));// creates a new directory and moves the created file to it
-//         console.log(file.uri);
-//       } catch (error) {
-//         console.error(error)
-//       };
-//     };
-
     return (
       <View style={styles.mainViewStyling}>
         <ColourPicker colour={color} setColour={setColor} />
@@ -325,7 +307,7 @@ const Canvas = ({ initialPaths }) => {
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
                 <TouchableOpacity
-                onPress={saveSVGtoGallery}
+                onPress={saveHappyTestData}
                 >
                   {/* () => alert("This feature is not currently available") */}
                   <Text style={styles.optionalButtonTextStyling}>Save art to gallery!</Text>
@@ -352,7 +334,12 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "#fff",
-    marginLeft: width * 0.06
+    marginLeft: width * 0.06,
+    height: height * 0.9,
+    width: width * 0.7,
+    borderWidth: 4,
+    borderRadius: 10,
+    overflow: 'hidden'
   },
   svgstyling: {
     height: height * 0.9,

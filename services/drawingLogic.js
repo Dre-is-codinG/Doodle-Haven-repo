@@ -87,3 +87,52 @@ export const liveUpdateGallery = (updateGallery) => {
     } )
     return closeConnection;
 };
+
+export const saveHappyTestData = async (paths) => {
+/*
+ this accepts the arguments that would be used to both link the user to the drawing as well as the 
+ properties of the paths to the drawing in the firestore database
+*/
+    const userId = auth.currentUser.uid;
+// this variable would be used to store the current user's user id which would be accessed later
+    try {
+        await addDoc(collection(db, "users", userId, "ML-Training",  "TestData", "happy"), {
+    // creates a document that stores the following in a .json format in the collection
+/* 
+this would create a sub collection in my db in the users collection that 
+would store paths in the appropriate user id
+*/
+            paths,
+            createdAt: serverTimestamp(),
+        });
+        alert("test data saved! ☁️")
+    } catch (error) {
+        console.error("Error when saving test data: ", error)
+    }
+        
+};
+
+
+export const saveSadTestData = async (paths) => {
+/*
+ this accepts the arguments that would be used to both link the user to the drawing as well as the 
+ properties of the paths to the drawing in the firestore database
+*/
+    const userId = auth.currentUser.uid;
+// this variable would be used to store the current user's user id which would be accessed later
+    try {
+        await addDoc(collection(db, "users", userId, "ML-Training", "TestData", "sad"), {
+    // creates a document that stores the following in a .json format in the collection
+/* 
+this would create a sub collection in my db in the users collection that 
+would store paths in the appropriate user id
+*/
+            paths,
+            createdAt: serverTimestamp(),
+        });
+        alert("test data saved! ☁️")
+    } catch (error) {
+        console.error("Error when saving test data: ", error)
+    }
+        
+};

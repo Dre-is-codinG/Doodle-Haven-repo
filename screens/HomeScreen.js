@@ -66,7 +66,7 @@ loaded and is complete.
 
     <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
       <ImageBackground
-      source={require('../assets/images/main.png')}
+      source={require('../assets/images/HomeWallpaper.png')}
       style={styles.safeareastyle}
       >
         <TouchableOpacity 
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     margin: 'auto',
     marginBottom: height * 0.02,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
-    opacity: 0.6,
+    opacity: 0.45,
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowColor: 'black',
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     margin: 'auto',
     marginBottom: height * 0.02,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
-    opacity: 0.6,
+    opacity: 0.5,
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowColor: 'black',
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     margin: 'auto',
     marginBottom: height * 0.02,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
-    opacity: 0.6,
+    opacity: 0.5,
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowColor: 'black',

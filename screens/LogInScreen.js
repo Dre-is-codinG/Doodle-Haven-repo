@@ -11,7 +11,8 @@ import { logIn } from '../services/authLogic';
 const {height, width} = Dimensions.get('window')
 /* 
 Using the React Native Dimensions object, I am able to access the dimensions of the screen that is rendering the 
-application. By retrieving these dimensions, I can ensure that the objects and components within the screen are
+application. By retrieving these dimensions, I can ensure that t
+he objects and components within the screen are
 rendered appropriately to fit any screen of any size or type.
 */
 export default function LogInScreen( { navigation } ) {

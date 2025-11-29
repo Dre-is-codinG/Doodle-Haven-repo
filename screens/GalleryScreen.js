@@ -57,7 +57,7 @@ loaded and is complete.
   return (
     <ImageBackground 
     style={styles.safeareastyle}
-    source={require('../assets/images/main.png')}
+    source={require('../assets/images/gallareyWallpaper.png')}
     >
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
         <View style={styles.titleView}>

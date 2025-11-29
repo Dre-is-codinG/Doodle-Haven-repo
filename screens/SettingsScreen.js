@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Switch, Dimensions, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Switch, Dimensions, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, ImageBackground } from 'react-native';
 import React,{ useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as screenOrientation from 'expo-screen-orientation';
@@ -52,7 +52,9 @@ export default function SettingsScreen() {
       };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ImageBackground 
+    source={require('../assets/images/gallareyWallpaper.png')}
+    style={styles.container}>
       <View style={styles.formItemView}>
             <Text style={styles.title}>Settings Screen</Text>
         </View>
@@ -200,7 +202,7 @@ export default function SettingsScreen() {
             handlePress={submit}
             />
         </ScrollView>
-    </SafeAreaView>
+    </ImageBackground>
   )
 }
 
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: theme.COLOURS.innerbackground
+        backgroundColor: theme.COLOURS.innerbackground,
     },
     scrollView: {
         width: width * 1,
