@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
 import { Svg, Path } from 'react-native-svg';
 import React from 'react';
 import { theme } from '../config/theme';
@@ -39,11 +39,11 @@ const styles = StyleSheet.create({
         borderRadius: theme.BUTTONS.sharpButtonRadius,
         borderWidth: theme.BUTTONS.defaultButtonBorderWidth,
         overflow: 'hidden',
-        marginVertical: height * 0.01
+        marginVertical: height * 0.01,
     },
     svgStyling: {
         width: '100%',
         height: '125%',
         flex: 1
-    }
+    },
 })

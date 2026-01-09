@@ -14,7 +14,6 @@ application. By retrieving these dimensions, I can ensure that the objects and c
 rendered appropriately to fit any screen of any size or type.
 */
 
-
 export default function GalleryScreen({ navigation }) {
   
   const [art, setArt] = useState([]);
@@ -73,10 +72,7 @@ loaded and is complete.
               />
             ))
           ):(
-/*
-if there are no paths in the array it returns text informing the 
-user that there are no drawings saved 
-*/
+
             <Text>Start drawing!, this place is empty 🌵...</Text>
           )}
         </ScrollView>

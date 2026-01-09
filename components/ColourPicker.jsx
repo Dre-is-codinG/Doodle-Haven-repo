@@ -23,7 +23,6 @@ const ColourPicker = ({ colour, setColour }) => {
             swatches={true}
             onColorChange={setColour}
             thumbSize={30}
-            onColorChangeComplete={(color) => console.log('Color selected:', color)}
             style={styles.colourPickerStyle}
           />
         </View>

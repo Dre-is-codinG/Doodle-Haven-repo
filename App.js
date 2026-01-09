@@ -1,4 +1,6 @@
+import {} from "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
@@ -11,10 +13,16 @@ import CanvasScreen from "./screens/CanvasScreen";
 import GalleryScreen from "./screens/GalleryScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import AccessibilityScreen from "./screens/AccessibilityScreen";
+import GuardianAccountCreationScreen from "./screens/GuardianAccountCreationScreen";
+import GuardianPasscodeScreen from "./screens/GuardianPasscodeScreen";
 import * as Font from 'expo-font';
 import { SettingsProvider } from "./services/globalSettings"
+import HamburgerButton from "./components/HamburgerButton";
+import { ImageBackground } from "react-native";
+import { theme } from "./config/theme";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   const [isFontsLoaded, setFontsLoaded] = useState(false);
@@ -46,6 +54,38 @@ export default function App() {
     return null;// if the fonts have not been loaded, it would return a null value and not render anything on the screen.
   }
 
+  function DrawerNavigation() {
+   return (
+    <Drawer.Navigator 
+    screenOptions={({ navigation }) => ({
+    swipeEnabled: false,
+    drawerActiveTintColor: theme.COLOURS.primary,
+    drawerInactiveTintColor: theme.COLOURS.secondary,
+    drawerLabelStyle: {
+      fontFamily: theme.FONTS.formTitleFontFamily,
+    }
+    })}
+    drawerContent={(props) => (
+        <ImageBackground
+        style={{flex: 1}}
+        source={require('./assets/images/sliderdb.png')}
+        resizeMode="cover"
+        >
+          <DrawerContentScrollView {...props} contentContainerStyle={{ padding: 20 }}>
+            <DrawerItemList {...props} />
+          </DrawerContentScrollView>
+        </ImageBackground>
+      )}
+    >
+      
+
+      <Drawer.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'HomeScreen', headerShown: false }}/>
+      <Drawer.Screen name="GuardianAccountCreationScreen" component={GuardianAccountCreationScreen} options={{ title: 'GuardianAccountCreation', headerShown: false }} />
+    </Drawer.Navigator>
+   )
+  }
+
+
   return(
     <SettingsProvider>
       <NavigationContainer>
@@ -55,11 +95,12 @@ export default function App() {
           <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
           <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
           <Stack.Screen name="LogInScreen" component={LogInScreen} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} options={{gestureEnabled: false}} />
+          <Stack.Screen name="HomeDrawer" component={DrawerNavigation} options={{gestureEnabled: false}} />
           <Stack.Screen name="CanvasScreen" component={CanvasScreen} />
           <Stack.Screen name="GalleryScreen" component={GalleryScreen} />
           <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
           <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen} options={{gestureEnabled: false}} />
+          <Stack.Screen name="GuardianPasscodeScreen" component={GuardianPasscodeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SettingsProvider>

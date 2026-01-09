@@ -52,11 +52,10 @@ export default function AccessibilityScreen({ navigation }) {
             colourBlindEffect
         }
         saveUserPreferences(pref);  // Saves the user's preferences to SQLite database
-        // dumpDatabaseContent();
-        // exportDatabase();
+
         console.log('Preferences saved:', pref);// console logs each preference to see if it saved correctly
         setTimeout(() => {
-              navigation.navigate('HomeScreen')
+              navigation.navigate('HomeDrawer')
               // navigates to the homescreen after preferences have been added to the db
             }, 0);
     };

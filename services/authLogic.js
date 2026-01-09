@@ -43,3 +43,7 @@ export const resetPassword = async (email) => {
     }
 };
 
+export const ParentCarerSignUp = async (email, username) => {
+  
+}
+

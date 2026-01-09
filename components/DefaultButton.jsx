@@ -37,6 +37,10 @@ const styles = StyleSheet.create({
     height: theme.BUTTONS.defaultLargeButtonHeight,
     paddingTop: 5,
     marginTop: 20,
+    opacity: 0.9,
+    shadowOffset: {width: 5, height: 5},
+    shadowOpacity: 0.7,
+    shadowColor: 'black',
   },
   buttontext: {
     fontSize: theme.BUTTONS.defaultButtonFontSize,

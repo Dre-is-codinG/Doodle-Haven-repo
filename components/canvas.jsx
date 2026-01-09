@@ -79,15 +79,10 @@ const Canvas = ({ initialPaths }) => {
   const handleFingerMotionEnd = () => {
     if (currentPath.length === 0) return;// checks if the currentPath is empty and if so, exists the function
     setPaths([...paths, { path: currentPath, color, strokeWidth }]);;// this changes the state of paths by including the the current path after the end of a line
-    console.log("currentPath array: ", currentPath)// this logs and returns each coordinate in the terminal, this would be used to check if the code works
-    console.log("Color: ", color)
-    console.log("Stroke Width: ", strokeWidth)
-    console.log(bin)
     setcurrentPath([]);// reverts the currentPath array to 0, ending the creation of a line
   };
 
   const undoFunction = () => {
-    console.log("paths array: ", paths);
     if (paths.length === 0) return;
 /* 
   this tells React native to break the function and not continue if the paths array is empty in order to avoid getting the undefined 
@@ -194,6 +189,14 @@ const Canvas = ({ initialPaths }) => {
 
   const handleSave = async () => {
     await savePathsToDB(paths)// implements the function taking the paths promise
+  };
+
+  const handleHappyTestDataSave = async () => {
+    await saveHappyTestData(paths)
+  };
+
+  const handleSadTestDataSave = async () => {
+    await saveSadTestData(paths)
   };
 
 
@@ -307,16 +310,16 @@ const Canvas = ({ initialPaths }) => {
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
                 <TouchableOpacity
-                onPress={saveHappyTestData}
+                onPress={handleSave}
                 >
                   {/* () => alert("This feature is not currently available") */}
-                  <Text style={styles.optionalButtonTextStyling}>Save art to gallery!</Text>
+                  <Text style={styles.optionalButtonTextStyling}>save your Art!</Text>
                 </TouchableOpacity>
               </View>
                 <TouchableOpacity
-                onPress={handleSave}
+                onPress={handleSadTestDataSave}
                 >
-                  <Text style={styles.optionalButtonTextStyling}>Export art!</Text>
+                  <Text style={styles.optionalButtonTextStyling}>save to sad dataset ☹️!</Text>
                 </TouchableOpacity>
             </View>
           )}
@@ -344,7 +347,7 @@ const styles = StyleSheet.create({
   svgstyling: {
     height: height * 0.9,
     width: width * 0.7,
-    borderWidth: 4,
+    borderWidth: 1,
     borderRadius: 10,
   },
   toolBarStyling: {
@@ -357,7 +360,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', // allows for the tool buttons to go to the next line if they do not fit in the toolbar box.
     flexDirection: 'row',
     position: 'relative',
-    zIndex: 1000
+    zIndex: 1000,
+    opacity: 0.7
   },
   functionButtons: {
     width: width * 0.1,

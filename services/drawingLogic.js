@@ -88,6 +88,7 @@ export const liveUpdateGallery = (updateGallery) => {
     return closeConnection;
 };
 
+
 export const saveHappyTestData = async (paths) => {
 /*
  this accepts the arguments that would be used to both link the user to the drawing as well as the 
@@ -96,7 +97,7 @@ export const saveHappyTestData = async (paths) => {
     const userId = auth.currentUser.uid;
 // this variable would be used to store the current user's user id which would be accessed later
     try {
-        await addDoc(collection(db, "users", userId, "ML-Training",  "TestData", "happy"), {
+        await addDoc(collection(db, "users", userId, "happy-dataset"), {
     // creates a document that stores the following in a .json format in the collection
 /* 
 this would create a sub collection in my db in the users collection that 
@@ -105,7 +106,7 @@ would store paths in the appropriate user id
             paths,
             createdAt: serverTimestamp(),
         });
-        alert("test data saved! ☁️")
+        console.log("Test data saved successfully")
     } catch (error) {
         console.error("Error when saving test data: ", error)
     }
@@ -121,7 +122,7 @@ export const saveSadTestData = async (paths) => {
     const userId = auth.currentUser.uid;
 // this variable would be used to store the current user's user id which would be accessed later
     try {
-        await addDoc(collection(db, "users", userId, "ML-Training", "TestData", "sad"), {
+        await addDoc(collection(db, "users", userId, "sad-dataset"), {
     // creates a document that stores the following in a .json format in the collection
 /* 
 this would create a sub collection in my db in the users collection that 
@@ -130,7 +131,7 @@ would store paths in the appropriate user id
             paths,
             createdAt: serverTimestamp(),
         });
-        alert("test data saved! ☁️")
+        console.log("Test data saved successfully")
     } catch (error) {
         console.error("Error when saving test data: ", error)
     }

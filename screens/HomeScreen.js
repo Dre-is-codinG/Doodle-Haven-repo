@@ -7,6 +7,7 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import { backgroundMusic } from '../services/sound';
+import HamburgerButton from '../components/HamburgerButton';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -49,17 +50,19 @@ loaded and is complete.
   }, []);
 
   useEffect(() => {
-    let sound;
+    let player;
 
     async function playBackgroundMusic() {
-      sound = await backgroundMusic(require('../assets/sounds/piano-loop.mp3'));
+      player = await backgroundMusic(require('../assets/sounds/ambient background sound.mp3'));
     }
+    console.log("Music playing...");
     playBackgroundMusic();
     return () => {
-      if (sound) {
-        sound.stopAsync();
-        sound.unloadAsync();
+      if (player) {
+        player.pause();
+        player.remove();
       }
+      
   }}, []);
 
   return (
@@ -69,6 +72,7 @@ loaded and is complete.
       source={require('../assets/images/HomeWallpaper.png')}
       style={styles.safeareastyle}
       >
+        <HamburgerButton onPress={() => navigation.toggleDrawer()} />
         <TouchableOpacity 
         style={styles.drawButtonStyle}
         activeOpacity={0.4}
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
   },
   drawButtonStyle: {
     width: width * 0.9,
-    height: height * 0.5,
+    height: height * 0.45,
     alignItems:'center',
     justifyContent: 'center',
     margin: 'auto',

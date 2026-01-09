@@ -63,7 +63,7 @@ export default function LogInScreen( { navigation } ) {
             console.log("User log in successful", result.user);
             alert("Welcome back!");
             setTimeout(() => {
-              navigation.navigate('HomeScreen')// navigates to the homescreen after validation routine is finished
+              navigation.navigate('HomeDrawer')// navigates to the homescreen after validation routine is finished
             }, 0);
           }
         }}
