@@ -6,10 +6,13 @@ import { theme } from '../config/theme';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useState } from 'react'
 import HamburgerButton from '../components/HamburgerButton';
+import { createGuardianProfile } from '../services/guardianLogic';
 
 const {height, width} = Dimensions.get('window')
 
 export default function GuardianAccountCreationScreen({ navigation }) {
+    const [guardianName, setGuardianName] = useState("");// state to store guardian name
+    const [guardianEmail, setGuardianEmail] = useState("");// state to store guardian email
 
     useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
         screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
@@ -17,6 +20,21 @@ export default function GuardianAccountCreationScreen({ navigation }) {
     // tells react native to return the screen orientation to the default mode once the page is unloaded
         };
       }, []);
+
+      const handleGuardianAccountCreation = async () => {
+        const result = await createGuardianProfile(guardianEmail, guardianName);
+// calls the createGuardianProfile function and stores the returned value to result variable
+        if (result.error) {
+            console.log("Error creating guardian profile: ", result.error);
+            alert("Couldn't save guardian profile, try again!");
+            // alerts user if there were any errors during the creation process
+        } else {
+            console.log("Guardian Profile created");
+            navigation.navigate("GuardianPasscodeScreen");
+            // if successful, navigates user to the GuardianPasscodeScreen
+        }
+      };
+
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -31,17 +49,21 @@ export default function GuardianAccountCreationScreen({ navigation }) {
       </View>
       <FormField 
       title={"Parent/Carer Name"}
+      value={guardianName}
+      handleChangeText={text => setGuardianName(text)}
       placeholder={"What is your name?          "}
       keyboardType={"default"}
       />
       <FormField 
       title={"Parent/Carer Email"}
+      value={guardianEmail}
+      handleChangeText={text => setGuardianEmail(text)}
       placeholder={"What is your email?         "}
       keyboardType={"email-address"}
       />
       <DefaultButton 
       title={"Create Account"}
-      handlePress={() => {navigation.navigate("GuardianPasscodeScreen")}}
+      handlePress={handleGuardianAccountCreation}
       />
     </SafeAreaView>
   )

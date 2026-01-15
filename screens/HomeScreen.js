@@ -8,6 +8,7 @@ import Canvas from '../components/canvas'; //imports canvas component from compo
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import { backgroundMusic } from '../services/sound';
 import HamburgerButton from '../components/HamburgerButton';
+import { guardianExists } from '../services/guardianLogic';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -64,6 +65,15 @@ loaded and is complete.
       }
       
   }}, []);
+
+  const handleGuardianNavigation = async () => {
+    const exists = await guardianExists();
+    if (exists) {
+      navigation.navigate("GuardianPasscodeScreen"); // Navigate if guardian exists
+    } else {
+      navigation.navigate("GuardianAccountCreationScreen"); // Navigate if not
+    }
+  };
 
   return (
 
