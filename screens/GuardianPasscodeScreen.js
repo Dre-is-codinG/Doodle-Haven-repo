@@ -6,11 +6,11 @@ import { theme } from '../config/theme';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useState } from 'react'
 import HamburgerButton from '../components/HamburgerButton';
-import { setGuardianPasscode } from '../services/guardianLogic';
+import { verifyGuardianPasscode } from '../services/guardianLogic';
 
 const {height, width} = Dimensions.get('window')
 export default function GuardianPasscodeScreen({ navigation }) {
-    const [passcode, setPasscode] = useState(1234);
+    const [passcode, setPasscode] = useState("");
     useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
             screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
             return () => { screenOrientation.unlockAsync(); 
@@ -18,9 +18,16 @@ export default function GuardianPasscodeScreen({ navigation }) {
             };
           }, []);
 
-    const handleStoreGuardianPasscode = async () => {
-        const result = await setGuardianPasscode(passcode);
-
+    const handleGuardianPasscodeCheck = async () => {
+        const result = await verifyGuardianPasscode(passcode);
+// runs the verification process on the current state of the passcode variable.
+        if (result) {
+            navigation.navigate("GuardianAccountConfirmationScreen");
+// if passcode is correct, redirects user to guardian account confirmation screen.
+        } else {
+            alert("Incorrect passcode");
+// else, informs user that the passcode is incorrect.
+        }
     }
 
   return (
@@ -34,17 +41,17 @@ export default function GuardianPasscodeScreen({ navigation }) {
         <TextInput 
         style={styles.formtext}
         value={passcode}
-        handleChangeText={number => setPasscode(number)}
+        onChangeText={number => setPasscode(number)}
         placeholder={"Enter a passcode (4-digit)         "}
         keyboardType={"numeric"}
         secureTextEntry={true}
-        maxLenght={4}
+        maxLength={4}
       />
       </View>
       
       <DefaultButton 
       title={"continue"}
-      handlePress={() => {navigation.navigate("GuardianAccountConfirmationScreen")}}
+      handlePress={handleGuardianPasscodeCheck}
       />
     </SafeAreaView>
   )

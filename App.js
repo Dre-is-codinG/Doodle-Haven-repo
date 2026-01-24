@@ -16,6 +16,7 @@ import AccessibilityScreen from "./screens/AccessibilityScreen";
 import GuardianAccountCreationScreen from "./screens/GuardianAccountCreationScreen";
 import GuardianPasscodeScreen from "./screens/GuardianPasscodeScreen";
 import GuardianAccountConfirmationScreen from "./screens/GuardianAccountConfirmationScreen";
+import GuardianAccountPasscodeSetScreen from "./screens/GuardianAccountPasscodeSetScreen";
 import * as Font from 'expo-font';
 import { SettingsProvider } from "./services/globalSettings"
 import HamburgerButton from "./components/HamburgerButton";
@@ -141,6 +142,7 @@ export default function App() {
           <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen} options={{gestureEnabled: false}} />
           <Stack.Screen name="GuardianPasscodeScreen" component={GuardianPasscodeScreen} />
           <Stack.Screen name="GuardianAccountConfirmationScreen" component={GuardianAccountConfirmationScreen} />
+          <Stack.Screen name="GuardianAccountPasscodeSetScreen" component={GuardianAccountPasscodeSetScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SettingsProvider>

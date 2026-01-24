@@ -4,6 +4,8 @@ import FormField from '../components/FormField';
 import { theme } from '../config/theme';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useState } from 'react'
+import { getGuardianDetails, getChildAccountDetails } from '../services/guardianLogic';
+import TestButton from '../components/testButton';
 
 const {height, width} = Dimensions.get('window')
 
@@ -14,6 +16,18 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
 
     useEffect(() => {//this tells react native to lock the screen orientation to portrait mode once the page is loaded
             screenOrientation.lockAsync(screenOrientation.OrientationLock.PORTRAIT_UP);
+            
+            const loadAccountDetails = async () => {
+                const guardian = await getGuardianDetails();// returns guardian details
+                const child = await getChildAccountDetails();// returns child details
+                if (guardian) {
+                    setGuardianName(guardian);// sets guardianName to returned value of guardian function
+                }
+                if (child) {
+                    setChildAccount(child);// sets the state of childAccount to the returned value of child
+                }
+            };
+            loadAccountDetails();// calls function
             return () => { screenOrientation.unlockAsync(); 
         // tells react native to return the screen orientation to the default mode once the page is unloaded
             };
@@ -27,11 +41,11 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
           />
           <Text style={styles.formtitle}>Guardian:</Text>
           <View style={styles.formview}>
-            <Text style={styles.formtext}>{guardianName}</Text>
+            <Text style={styles.formtext}>{guardianName || "Loading..."}</Text>
           </View>
           <Text style={styles.formtitle}>Child Account:</Text>
           <View style={styles.formview}>
-            <Text style={styles.formtext}>{childAccount}</Text>
+            <Text style={styles.formtext}>{childAccount || "Loading..."}</Text>
           </View>
           <TouchableOpacity style={styles.messageView}>
             <Text style={styles.messageText}>See drawing report</Text>
@@ -39,6 +53,9 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
            <TouchableOpacity style={styles.messageView2}>
             <Text style={styles.messageText}>See child's drawings</Text>
           </TouchableOpacity>
+          <TestButton 
+          title={"test"}
+          />
     </SafeAreaView>
   )
 }

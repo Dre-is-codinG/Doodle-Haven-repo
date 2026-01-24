@@ -24,13 +24,13 @@ export default function GuardianAccountCreationScreen({ navigation }) {
       const handleGuardianAccountCreation = async () => {
         const result = await createGuardianProfile(guardianEmail, guardianName);
 // calls the createGuardianProfile function and stores the returned value to result variable
-        if (result.error) {
+        if (!result) {
             console.log("Error creating guardian profile: ", result.error);
             alert("Couldn't save guardian profile, try again!");
             // alerts user if there were any errors during the creation process
         } else {
             console.log("Guardian Profile created");
-            navigation.navigate("GuardianPasscodeScreen");
+            navigation.navigate("GuardianAccountPasscodeSetScreen");
             // if successful, navigates user to the GuardianPasscodeScreen
         }
       };

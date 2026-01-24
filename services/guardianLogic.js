@@ -1,7 +1,9 @@
 import { db, auth } from "../lib/firebaseConfig";
 import { doc, getDoc, getDocs, query, orderBy, limit, addDoc, collection, onSnapshot, updateDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { hashPasscode } from "./hashLogic";
 
 export const createGuardianProfile = async (guardianEmail, guardianName) => {
+    if (!auth.currentUser) return false; //this ensures that if no logged in user, function is returns false
 // accepts the guardian's email and name as arguments when called
 const childId = auth.currentUser.uid;// gets the current logged in child's user id from database
 const guardianRef = doc(db, "users", childId, "Guardian", "Profile");
@@ -13,15 +15,16 @@ const guardianRef = doc(db, "users", childId, "Guardian", "Profile");
             createdAt: serverTimestamp()
 // adds the gaurdian's email and guardian name to the sub collection.
         }, { merge: true })// prevents overwriting existing data in the database
-        return { success: true };// returns success true if the profile had been created.
+        return true;// returns true if the profile had been created.
     } catch (error) {
         console.error("Error when saving guardian profile: ", error)// logs any errors encountered
-        return { error: error.message };
+        return false;
     }
 };
 
 
 export const getGuardianDetails = async () => {
+    if (!auth.currentUser) return false; //this ensures that if no logged in user, function is returns false
     const childId = auth.currentUser.uid; // retrieves the currently logged in child's userID
     const guardianRef = doc(db, "users", childId, "Guardian", "Profile");
     const guardianSnap = await getDoc(guardianRef); // retrieves the document from the database
@@ -36,6 +39,7 @@ export const getGuardianDetails = async () => {
 };
 
 export const getChildAccountDetails = async () => {
+    if (!auth.currentUser) return false; //this ensures that if no logged in user, function is returns false
     const childId = auth.currentUser.uid; // retrieves the currently logged in child's userID
     const docRef = doc(db, "users", childId); // references the specific child user 
     const docSnap = await getDoc(docRef); // retrieves the document from the database
@@ -48,7 +52,36 @@ export const getChildAccountDetails = async () => {
 
 };
 
+export const verifyGuardianPasscode = async (passcode) => {
+    if (!auth.currentUser) return false; //this ensures that if no logged in user, function is returns false
+// this function would be responsible for verifying the inputted guardian passcode.
+    try{
+        const childId = auth.currentUser.uid;// recieves the userID of the currently logged in child.
+        const guardianRef = doc(db, "users", childId, "Guardian", "Profile");// references guardian profile field in db
+        const guardianSnap = await getDoc(guardianRef);
+    // function returns the value of the document within the referenced field in the database.
+        if (!guardianSnap.exists()) return false;// if the file does not exist, it returns a false value.
+        const storedPasscodeHash = guardianSnap.data().hashedPasscode;
+    // stores the hashedPasscode variable from the snap returned by the guardianSnap function
+        const inputedHash = await hashPasscode(passcode);
+    // hashes the inputed function in the field, this would be used to compare the stored hash.
+    /** 
+     * the SHA-256 encryption function is a one way function, the returned value of this hash function cannot be 
+     * turned back into plain text, because of this, in order to appropriately verify if the parent has entered
+     * the correct hash, the most efficient way is by directly comparing hashed values run through the same
+     * hash function.
+    */
+        return inputedHash === storedPasscodeHash;
+    // returns a true value if both values are identical.
+    } catch (error) {
+        console.error("Error encountered during verification: ", error);
+        return false;
+    }
+    
+}
+
 export const setGuardianPasscode = async (passcode) => {
+    if (!auth.currentUser) return false; //this ensures that if no logged in user, function is returns false
     const childId = auth.currentUser.uid; // retrieves the currently logged in child's userID
     if (!childId) {
         throw new Error("No user is currently logged in.")// throws error if no user is logged in
@@ -56,7 +89,7 @@ export const setGuardianPasscode = async (passcode) => {
     const guardianRef = doc(db, "users", childId, "Guardian", "Profile");// references the Guardian sub collection
 
     try {
-        await updateDoc(guardianRef, { passcode: passcode });
+        await updateDoc(guardianRef, { hashedPasscode: passcode });
 // updates the passcode field in the guardian profile sub collection with the provided passcode
         return { success: true };// returns true if passcode was created and updated successfully.
     } catch (error) {
