@@ -100,7 +100,7 @@ export const setGuardianPasscode = async (passcode) => {
 }
 
 export const guardianExists = async () => {
-    const userProfile = auth.currentUser;
+    const userProfile = auth.currentUser.uid;
     if (!userProfile) {
         return false; // if no user is logged in it would return false everytime, avoiding errors
     }
@@ -110,3 +110,21 @@ export const guardianExists = async () => {
 
   return guardianSnap.exists();// returns true if a guardian profile exists, and false if not.
 };
+
+export const childReportDataSave = async (record) => {
+    const childId = auth.currentUser.uid;// defines the userID of the currently logged in user
+    await addDoc(collection(db, "users", childId, "user_Report"), record);// stores the drawing data in the user report
+}
+
+
+export const fetchChildReport = async () => {
+    const childId = auth.currentUser.uid;// fetches userID of the currently logged in user
+    const qry = query(collection(db, "users", childId, "user_Report"), orderBy("time", "asc"));
+// this querries the database, in an attempt to fetch all the data from user report form the most recent
+
+    const reportSnapshot = await getDocs(qry);// retrieves the querried data and stores in the variable snapshot
+    return reportSnapshot.docs.map(doc => ({
+        ...doc.data(),// deconstructs the data within the report snapshot retrieved form db
+        time: doc.data().time?.toDate()// converts the saved time to numerical values
+    }));
+}

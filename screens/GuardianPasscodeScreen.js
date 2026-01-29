@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image, TextInput, ImageBackground } from 'react-native';
 import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '../components/FormField';
 import DefaultButton from '../components/DefaultButton';
@@ -31,7 +31,7 @@ export default function GuardianPasscodeScreen({ navigation }) {
     }
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <ImageBackground source={require('../assets/images/guardianBG.png')} style={styles.mainContainer}>
       <HamburgerButton onPress={() => navigation.toggleDrawer()} />
       <Image 
       source={require('../assets/images/pfp.png')}
@@ -53,7 +53,7 @@ export default function GuardianPasscodeScreen({ navigation }) {
       title={"continue"}
       handlePress={handleGuardianPasscodeCheck}
       />
-    </SafeAreaView>
+    </ImageBackground>
   )
 }
 
@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
     pfpStyle: {
         width: width * 0.65,
         height: height * 0.3,
-        marginBottom: height * 0.04
+        marginBottom: height * 0.04,
+        marginTop: height * 0.1
     },
     formview: {
         flexDirection: "row",

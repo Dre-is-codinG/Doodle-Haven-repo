@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image, TextInput, ImageBackground } from 'react-native';
 import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '../components/FormField';
 import { theme } from '../config/theme';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useState } from 'react'
 import { getGuardianDetails, getChildAccountDetails } from '../services/guardianLogic';
-import TestButton from '../components/testButton';
 
 const {height, width} = Dimensions.get('window')
 
@@ -34,7 +33,7 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
           }, []);
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <ImageBackground source={require('../assets/images/guardianBG.png')} style={styles.mainContainer}>
           <Image 
           source={require('../assets/images/user.png')}
           style={styles.pfpStyle}
@@ -47,16 +46,16 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
           <View style={styles.formview}>
             <Text style={styles.formtext}>{childAccount || "Loading..."}</Text>
           </View>
-          <TouchableOpacity style={styles.messageView}>
+          <TouchableOpacity 
+          style={styles.messageView}
+          onPress={() => {navigation.navigate('ReportScreen')}}
+          >
             <Text style={styles.messageText}>See drawing report</Text>
           </TouchableOpacity>
            <TouchableOpacity style={styles.messageView2}>
             <Text style={styles.messageText}>See child's drawings</Text>
           </TouchableOpacity>
-          <TestButton 
-          title={"test"}
-          />
-    </SafeAreaView>
+    </ImageBackground>
   )
 }
 
@@ -88,15 +87,17 @@ const styles = StyleSheet.create({
         width: width * 0.8,
         height: height * 0.06,
         backgroundColor: theme.COLOURS.innerbackground,
-        marginBottom: height * 0.08,
-        borderRadius: theme.BUTTONS.smoothButtonRadius
+        marginBottom: height * 0.07,
+        borderRadius: theme.BUTTONS.smoothButtonRadius,
+        borderWidth: theme.BUTTONS.defaultButtonBorderWidth
     },
     messageView2: {
         marginTop: height * -0.2,
         width: width * 0.8,
         backgroundColor: theme.COLOURS.innerbackground,
         marginBottom: height * 0.2,
-        borderRadius: theme.BUTTONS.smoothButtonRadius
+        borderRadius: theme.BUTTONS.smoothButtonRadius,
+        borderWidth: theme.BUTTONS.defaultButtonBorderWidth
     },
     messageText: {
         fontSize: theme.FONTS.miniregularFontSize,

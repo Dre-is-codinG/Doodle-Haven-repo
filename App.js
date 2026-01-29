@@ -17,6 +17,7 @@ import GuardianAccountCreationScreen from "./screens/GuardianAccountCreationScre
 import GuardianPasscodeScreen from "./screens/GuardianPasscodeScreen";
 import GuardianAccountConfirmationScreen from "./screens/GuardianAccountConfirmationScreen";
 import GuardianAccountPasscodeSetScreen from "./screens/GuardianAccountPasscodeSetScreen";
+import ReportScreen from "./screens/ReportScreen";
 import * as Font from 'expo-font';
 import { SettingsProvider } from "./services/globalSettings"
 import HamburgerButton from "./components/HamburgerButton";
@@ -143,6 +144,7 @@ export default function App() {
           <Stack.Screen name="GuardianPasscodeScreen" component={GuardianPasscodeScreen} />
           <Stack.Screen name="GuardianAccountConfirmationScreen" component={GuardianAccountConfirmationScreen} />
           <Stack.Screen name="GuardianAccountPasscodeSetScreen" component={GuardianAccountPasscodeSetScreen} />
+          <Stack.Screen name="ReportScreen" component={ReportScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SettingsProvider>

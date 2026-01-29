@@ -45,12 +45,12 @@ const styles = StyleSheet.create({
     height: height * 0.2,
     borderWidth: 3,
     borderRadius: 30,
-    marginHorizontal: -(width * 0.05),
+    marginHorizontal: (width * 0.01),
     marginVertical: -(height * 0.04),
   },
   colourPickerStyle: {
     top: -(height * 0.1),
-    left: (width * 0.05),
+    left: (width * 0.07),
     zIndex: 2000,
     position: 'absolute',
   }

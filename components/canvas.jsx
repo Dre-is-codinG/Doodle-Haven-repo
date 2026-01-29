@@ -16,8 +16,10 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import ColourPicker from './ColourPicker';
 import Slider from '@react-native-community/slider'
 import { savePathsToDB, loadLastDrawing, saveHappyTestData, saveSadTestData } from "../services/drawingLogic"
+import { childReportDataSave } from '../services/guardianLogic';
 import { Paths, File, Directory } from "expo-file-system"
 import * as Sharing from "expo-sharing"
+import { serverTimestamp } from 'firebase/firestore';
 
  const {height, width} = Dimensions.get('window')
 
@@ -224,6 +226,51 @@ const Canvas = ({ initialPaths }) => {
     }
     };
 
+    const API_URL = "http://192.168.1.205:8000/predict";// PC's LAN IP address where API is running.
+
+    const pathFormatting = (paths) => {
+      return paths.map(p =>
+        p.path.map(cmd => {
+          const vector_coords = cmd.slice(1).split(",");// this removes all leading M and L values
+          return [Number(vector_coords[0]), Number(vector_coords[1])];// converts each path string to numbers
+        })
+      );
+    }
+
+    const predictEmotion = async () => {// this sends each drawing that is saved to the FastAPI
+      try {
+        const response = await fetch(API_URL, {
+        method: "POST",// sends drawing
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paths: pathFormatting(paths) })
+      });
+      const result = await response.json();// recieves the prediction and returns it
+      return result;
+      } catch (error) {
+         console.error("Prediction error:", error);
+          return null;
+      }
+    }
+
+    const handleSaveWithPrediction = async () => {
+      if (paths.length === 0) return alert("Can't save a blank canvas, express yourself a bit!");
+// informs the user in a motivational way to draw something that leads with their emotion.
+      const prediction = await predictEmotion();// calls ML backend function
+      if (!prediction) return alert("Prediction failed.");
+      if (prediction.probability < 0.7) {// ensures that the confidence level threshold is met and maintained
+        console.log("Could not confidently classify drawing.")// informs me if drawing does not meet the threshold
+        await savePathsToDB(paths);// saves the drawning to the firebase database.
+        return;
+      }
+      console.log(`Prediction: ${prediction.prediction} (Confidence: ${Math.round(prediction.probability * 100)}%)`);
+      await savePathsToDB(paths);
+      await childReportDataSave({
+        emotion: prediction.prediction,
+        confidence: prediction.probability,
+        time: serverTimestamp()
+      });
+    }
+
     return (
       <View style={styles.mainViewStyling}>
         <ColourPicker colour={color} setColour={setColor} />
@@ -310,7 +357,7 @@ const Canvas = ({ initialPaths }) => {
             <View style={styles.optionalViewStyling}>
               <View style={styles.innerOptionalButtonView}>
                 <TouchableOpacity
-                onPress={handleSave}
+                onPress={handleSaveWithPrediction}
                 >
                   {/* () => alert("This feature is not currently available") */}
                   <Text style={styles.optionalButtonTextStyling}>save your Art!</Text>
@@ -337,7 +384,7 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "#fff",
-    marginLeft: width * 0.06,
+    marginLeft: width * 0.065,
     height: height * 0.9,
     width: width * 0.7,
     borderWidth: 4,
@@ -403,7 +450,7 @@ const styles = StyleSheet.create({
     width: width * 0.01,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: width * -0.06,
     marginRight: width * -0.02
     
   },
