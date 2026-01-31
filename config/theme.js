@@ -7,11 +7,17 @@ export const theme = {
     COLOURS: {
 //default colour themes that would be adopted in the application
         primary: '#ddc9ae',
+        primaryFaint:'#ddc9ae65',
         secondary: '#C0A08A',
+        secondaryFaint: '#c0a08a88',
         tertiary: '#A48573',
+        tertiaryFaint: '#a485737e',
         quaternary: '#795b4aff',
+        quaternaryFaint: 'rgba(121, 91, 74, 0.29)',
         quinary: '#583f148c',
+        quinaryFaint: '#583f1446',
         background: '#f5e2c7',
+        backgroundFaint: '#f5e2c796',
         innerbackground: '#dcc19b41',
     },
     BUTTONS: {
@@ -21,7 +27,7 @@ export const theme = {
         smoothButtonRadius: 50,
         softButtonShadow: '#a3a3a3ff',
         defaultButtonBackground: '#efd9afff',
-        defaultButtonBorderWidth: 3,
+        defaultButtonBorderWidth: 4,
         defaultButtonBorderColour: '#715240ff',
         defaultLargeButtonWidth: width * 0.9,
         defaultLargeButtonHeight: height * 0.1,

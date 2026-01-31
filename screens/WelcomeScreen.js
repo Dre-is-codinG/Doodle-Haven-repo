@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, ImageBackground } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -47,7 +47,9 @@ loaded and is complete.
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeareastyle}>
+    <ImageBackground style={styles.safeareastyle}
+    source={require('../assets/images/welcomebg.png')}
+    >
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
         <View style={styles.radiustestview}>
           <Image
@@ -63,7 +65,7 @@ loaded and is complete.
         />
       </Animated.View>
       <StatusBar style="auto" />
-    </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -100,10 +102,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   radiustestview: {
-    marginTop: 50,
+    marginTop: height * 0.1,
     width: width * 0.5,
     height: height * 0.25,
-    backgroundColor: theme.COLOURS.primary,
+    backgroundColor: '#ddc9ae3c',
     borderWidth: 2,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
     shadowOffset: { width: 10, height: 10 },

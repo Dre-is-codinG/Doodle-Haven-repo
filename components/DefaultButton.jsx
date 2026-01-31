@@ -27,7 +27,7 @@ export default DefaultButton
 
 const styles = StyleSheet.create({
   buttonstyle: {
-    backgroundColor: theme.COLOURS.primary,
+    backgroundColor: theme.COLOURS.primaryFaint,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
     borderColor: theme.BUTTONS.defaultButtonBorderColour,
     borderWidth: theme.BUTTONS.defaultButtonBorderWidth,
@@ -38,9 +38,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     marginTop: 20,
     opacity: 0.9,
-    shadowOffset: {width: 5, height: 5},
-    shadowOpacity: 0.7,
-    shadowColor: 'black',
+
   },
   buttontext: {
     fontSize: theme.BUTTONS.defaultButtonFontSize,

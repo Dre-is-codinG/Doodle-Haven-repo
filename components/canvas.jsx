@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Image
  The dimensions object from the react native module allows me to access and return the dimensions of the screen that renders the app.
  By accessing these dimensions for the screen, it would allow me to render the canvas to fit any screen size or type.
 */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 /*
  useState object from the react module would allow me to set states and functions assigned to each gesture on the canvas
 */
@@ -20,6 +20,11 @@ import { childReportDataSave } from '../services/guardianLogic';
 import { Paths, File, Directory } from "expo-file-system"
 import * as Sharing from "expo-sharing"
 import { serverTimestamp } from 'firebase/firestore';
+import { sendPathsToCNNserver } from '../services/apiCommunication';
+import Cloud from '../animations/Cloud';
+import House from '../animations/House';
+import Sun from '../animations/Sun';
+import Tree from '../animations/Tree';
 
  const {height, width} = Dimensions.get('window')
 
@@ -36,6 +41,14 @@ const Canvas = ({ initialPaths }) => {
 // this function would be used to handle the state of the colours in the colour picker
   const [strokeWidth, setStrokeWidth] = useState(10);
 // this function would handle the width of each stroke
+  const [pathsTracker, setPathsTracker] = useState([]);
+// this state handler tracks the paths array 
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
+// this handles the cool down period for API interaction
+  const [predictionMessage, setPredictionMessage] = useState("");
+  const [timer, setTimer] = useState(0);// handles the state of the local timer
+  const[activeAnimation, setActiveAnimation] = useState(null);
+// this defines the current active animation
 
   useEffect(() => {
       setPaths(initialPaths);
@@ -45,6 +58,41 @@ const Canvas = ({ initialPaths }) => {
 */
     }, [initialPaths]);
 
+  useEffect(() => {
+    if (pathsTracker.length === 0) return;// aborts if the user has not made any drawings
+
+    const interval = setInterval(() => {
+    setTimer(prev => {
+      const nextSecond = prev + 1// this checks the next value
+
+      if (nextSecond === 5){
+        const rawPaths = pathFormatting(pathsTracker);// this returns the path in a format compatible for cnn
+        setTimer(-20);// gives 25 seconds cooldown in case the child user gets distracted
+        setTimeout(() => {
+          setPredictionMessage("")
+        }, 5000);// reverts the prediction message back to empty string after 5 seconds.
+        setPathsTracker([]);// pathsTracker array is reverted back to an empty array.
+        return 0; // after ever 5 seconds, the timer is reset back to 0
+      }
+      return nextSecond; // the timer increases by 1 every second
+  });
+  }, 1000);// this ensures that the interval is in 1000 ms
+
+    return () => clearInterval(interval);// this resets the time interval back to 0 once completed
+  }, [pathsTracker]); 
+
+  useEffect(() => {
+    console.log("✅ Canvas component mounted");
+  }, []);
+
+  const pathFormatting = (paths) => {
+      return paths.map(p =>
+        p.path.map(cmd => {
+          const vector_coords = cmd.slice(1).split(",");// this removes all leading M and L values
+          return [Number(vector_coords[0]), Number(vector_coords[1])];// converts each path string to numbers
+        })
+      );
+    }
 
 
   const handleFingerMove = (event) => {
@@ -78,10 +126,41 @@ const Canvas = ({ initialPaths }) => {
     setcurrentPath(newPath);// sets currentPath value to newPath value
   };
  
-  const handleFingerMotionEnd = () => {
+  const handleFingerMotionEnd = async () => {
     if (currentPath.length === 0) return;// checks if the currentPath is empty and if so, exists the function
-    setPaths([...paths, { path: currentPath, color, strokeWidth }]);;// this changes the state of paths by including the the current path after the end of a line
+    const stroke = { path: currentPath, color, strokeWidth }
+    const updatedPaths = [...paths, stroke]
+    // this changes the state of paths by including the the current path after the end of a line
+    const updateTracker = [...pathsTracker, stroke]
+    // this updates the pathsTracker with the new stroke created
+
+    setPaths(updatedPaths);// this sets the paths array to the updated Paths array.
+    setPathsTracker(updateTracker);// this sets the pathsTracker array to the updated paths
     setcurrentPath([]);// reverts the currentPath array to 0, ending the creation of a line
+    setTimer(0); // resets timer
+
+    if (updateTracker.length >= 15){
+      const rawPaths = pathFormatting(updateTracker);
+      const response = await sendPathsToCNNserver(rawPaths);// this stores the returned prediction of cnn model
+      setPathsTracker([]);// once the paths have been sent, the paths tracker would revert back to an empty array.
+      
+      if (response?.detected){// this checks if there was a true boolean value returned by the model
+        let emoji = "🎉"; // these emojis would add more interactivity to the user experience
+        if (response.message.toLowerCase().includes("cloud")) emoji = "☁️☁️";
+        if (response.message.toLowerCase().includes("flower")) emoji = "🌸";
+        if (response.message.toLowerCase().includes("house")) emoji = "🏠";
+        if (response.message.toLowerCase().includes("sun")) emoji = "🌞";
+        if (response.message.toLowerCase().includes("tree")) emoji = "🌳";
+        setTimer(-20);
+// this ensures that it would take a 25 second pause after a prediction before the cnn predicts another image.
+        console.log(`${response.message} ${emoji}`)// this console logs the message based on the prediction
+        setPredictionMessage(`${response.message} ${emoji}`);
+
+        setTimeout(() => {
+          setPredictionMessage("")
+        }, 5000);// this reverts the prediction message to blank and closes the message bubble.
+      }
+    }
   };
 
   const undoFunction = () => {
@@ -147,6 +226,7 @@ const Canvas = ({ initialPaths }) => {
 */
     setPaths([]);// sets the paths array to an empty array
     setcurrentPath([])// sets the currentpath array to an empty array
+    setPredictionMessage("");
     console.log("current Paths: ", currentPath)
   };
 
@@ -201,6 +281,38 @@ const Canvas = ({ initialPaths }) => {
     await saveSadTestData(paths)
   };
 
+  const forceDataSend = async () => {
+    if (pathsTracker.length === 0) {
+      console.log("Force send aborted: no paths");
+      return;
+    }
+
+    const rawPaths = pathFormatting(pathsTracker);
+    try {
+      const response = await sendPathsToCNNserver(rawPaths);
+      let emoji = "🎉"; // these emojis would add more interactivity to the user experience
+      let text = "wow";
+      let Anim = null;
+      if (response.message.toLowerCase().includes("cloud")) emoji = "☁️☁️", text = "cloud", Anim = "Cloud";
+      if (response.message.toLowerCase().includes("flower")) emoji = "🌸", text = "flower", Anim = "Flower";
+      if (response.message.toLowerCase().includes("house")) emoji = "🏠", text = "house", Anim = "House";
+      if (response.message.toLowerCase().includes("sun")) emoji = "🌞", text = "sun", Anim = "Sun";
+      if (response.message.toLowerCase().includes("tree")) emoji = "🌳", text = "tree", Anim = "Tree";
+      console.log("FORCE CNN RESPONSE:", response.message, emoji);
+      console.log(response.confidence, response.label);
+      setActiveAnimation(Anim);// sets the active animation to anim
+      console.log("Playing", activeAnimation);
+      setPredictionMessage(`A ${text}! ${emoji}`);
+      setTimeout(() => {
+          setPredictionMessage("")
+          setActiveAnimation(null)
+        }, 5000);// this reverts the prediction message to blank and closes the message bubble.
+    } catch (err) {
+      console.error("FORCE CNN ERROR:", err);
+      setPredictionMessage("");
+    }
+  };
+
 
 
     const saveSVGtoGallery = async () => {
@@ -228,14 +340,7 @@ const Canvas = ({ initialPaths }) => {
 
     const API_URL = "http://192.168.1.205:8000/predict";// PC's LAN IP address where API is running.
 
-    const pathFormatting = (paths) => {
-      return paths.map(p =>
-        p.path.map(cmd => {
-          const vector_coords = cmd.slice(1).split(",");// this removes all leading M and L values
-          return [Number(vector_coords[0]), Number(vector_coords[1])];// converts each path string to numbers
-        })
-      );
-    }
+    
 
     const predictEmotion = async () => {// this sends each drawing that is saved to the FastAPI
       try {
@@ -313,7 +418,28 @@ const Canvas = ({ initialPaths }) => {
           )}
         </Svg>
 
+       <View style={styles.animationOverlay} pointerEvents='none'>
+        {activeAnimation === "Cloud" && <Cloud />}
+        {activeAnimation === "House" && <House />}
+        {activeAnimation === "Sun" && <Sun />}
+        {activeAnimation === "Tree" && <Tree />}
+       </View>
+
+        {predictionMessage != "" && (
+          <View style={styles.predictedMessageBubble}>
+            <View style={styles.predictedMessageView}>
+              <Text style={styles.messageText}>{predictionMessage}</Text>
+              <View style={styles.bubbleTextExtension}/>
+            </View>
+          </View>
+        )}
+
       </View>
+       <TouchableOpacity style={styles.topRightButton}
+        onPress={forceDataSend}
+        >
+          <Image source={require('../assets/images/light-bulb.png')} style={styles.buttonIcon}/>
+        </TouchableOpacity>
         
         <ScrollView>
           <View style={styles.toolBarStyling}>
@@ -364,9 +490,9 @@ const Canvas = ({ initialPaths }) => {
                 </TouchableOpacity>
               </View>
                 <TouchableOpacity
-                onPress={handleSadTestDataSave}
+                onPress={forceDataSend}
                 >
-                  <Text style={styles.optionalButtonTextStyling}>save to sad dataset ☹️!</Text>
+                  <Text style={styles.optionalButtonTextStyling}>force send data to api!</Text>
                 </TouchableOpacity>
             </View>
           )}
@@ -394,13 +520,13 @@ const styles = StyleSheet.create({
   svgstyling: {
     height: height * 0.9,
     width: width * 0.7,
-    borderWidth: 1,
+    borderWidth: 3,
     borderRadius: 10,
   },
   toolBarStyling: {
     width: width * 0.15,
     height: height * 1.25,
-    borderWidth: 2,
+    borderWidth: 5,
     borderRadius: 10,
     backgroundColor: theme.COLOURS.primary,
     marginHorizontal: 20,
@@ -413,7 +539,7 @@ const styles = StyleSheet.create({
   functionButtons: {
     width: width * 0.1,
     height: height * 0.2,
-    borderWidth: 2,
+    borderWidth: 5,
     borderRadius: 30,
     marginHorizontal: width * 0.02,
     marginVertical: height * 0.02,
@@ -459,5 +585,75 @@ const styles = StyleSheet.create({
     height: height * 0.05,
     transform: [{ rotate: '-90deg' }],
     
-  }
+  },
+  predictedMessageBubble: {
+    position: 'absolute',
+    top: height * 0.15, // Adjust this to sit above the child's hand
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 2000, // Ensures it stays above the SVG and Toolbar
+  },
+  predictedMessageView: {
+    backgroundColor: '#FFF',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderRadius: 25,
+    borderWidth: 3,
+    borderColor: theme.COLOURS.secondary,
+    maxWidth: width * 0.7,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+  },
+  messageText: {
+    fontSize: 18,
+    fontFamily: theme.FONTS.formTitle,
+    textAlign: 'center',
+    color: '#333',
+  },
+  bubbleTextExtension: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderTopWidth: 15,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: '#FFF',
+    alignSelf: 'center',
+    marginTop: 0,
+  },
+  topRightButton: {
+  position: 'absolute',
+  top: height * -0.05,              // Distance from the top of the canvas
+  right: width * 0.18,            // Distance from the right edge
+  width: 50,
+  height: 50,
+  backgroundColor: '#52cfcd',
+  borderRadius: 25,     // Makes it a circle
+  justifyContent: 'center',
+  alignItems: 'center',
+  elevation: 5,         // Shadow for Android
+  shadowColor: '#000',  // Shadow for iOS
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  zIndex: 2000,         // Higher than the SVG (which is usually 0-1)
+},
+buttonIcon: {
+  width: '60%',
+  height: '60%',
+  resizeMode: 'contain',
+},
+animationOverlay: {
+  ...StyleSheet.absoluteFillObject, // Covers the entire parent container
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 1500, // Higher than SVG, but lower than the message bubble
+  marginHorizontal: width * 0.05
+},
 })

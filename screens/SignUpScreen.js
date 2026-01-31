@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity, } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity, ImageBackground } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +29,9 @@ export default function SignUpScreen( { navigation } ) {
       };
     }, []);// the empty array makes sure that the function is only called once when the page is loaded.
   return (
-    <SafeAreaView style={styles.safeareastyle}>
+    <ImageBackground style={styles.safeareastyle}
+    source={require('../assets/images/catbg.png')}
+    >
       <Text style={styles.titleStyle}>Sign Up!</Text>
       <View style={styles.formView}>
         <FormField 
@@ -78,20 +80,20 @@ export default function SignUpScreen( { navigation } ) {
         }
       />
       <StatusBar style="auto" />
-    </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   safeareastyle: {
     flex: 1,
-    backgroundColor: theme.COLOURS.background,
+    backgroundColor: theme.COLOURS.backgroundFaint,
     alignItems: 'center',
   },
   titleStyle: {
     fontSize: theme.FONTS.supertitleFontSize,
     color: theme.COLOURS.quaternary,
-    marginTop: height * 0.01,
+    marginTop: height * 0.015,
     fontWeight: '500',
     fontFamily: 'ClassicComic'
   },
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: width * 0.99,
     height: height * 0.6,
-    backgroundColor: theme.COLOURS.background,
+    backgroundColor: theme.COLOURS.backgroundFaint,
     borderColor: theme.COLOURS.quaternary,
     borderWidth: theme.BUTTONS.defaultButtonBorderWidth,
     borderRadius: theme.BUTTONS.smoothButtonRadius,

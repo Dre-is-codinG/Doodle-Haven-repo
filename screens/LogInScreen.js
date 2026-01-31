@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, TouchableOpacity, ImageBackground } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,7 +27,9 @@ export default function LogInScreen( { navigation } ) {
       };
     }, []);// the empty array makes sure that the function is only called once when the page is loaded.
   return (
-    <SafeAreaView style={styles.safeareastyle}>
+    <ImageBackground style={styles.safeareastyle}
+    source={require('../assets/images/dBG.png')}
+    >
       <Text style={styles.titleStyle}>Log In!</Text>
       <View style={styles.formView}>
         <FormField 
@@ -69,7 +71,7 @@ export default function LogInScreen( { navigation } ) {
         }}
       />
       <StatusBar style="auto" />
-    </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: width * 0.99,
     height: height * 0.4,
-    backgroundColor: theme.COLOURS.background,
+    backgroundColor: theme.COLOURS.backgroundFaint,
     borderColor: theme.COLOURS.quaternary,
     borderWidth: theme.BUTTONS.defaultButtonBorderWidth,
     borderRadius: theme.BUTTONS.smoothButtonRadius,

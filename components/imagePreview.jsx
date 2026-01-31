@@ -9,9 +9,16 @@ const {height, width} = Dimensions.get('window')
 this function would take the "paths" parameter where it would store the paths that would be fetched
 from the firestore database for the appropriate user
 */
-const ImagePreview = ({ paths }) => {
+const ImagePreview = ({ paths, isSelected, id }) => {
   return (
-    <View style={styles.imagePreviewView}>
+    <View style={[
+        styles.imagePreviewView,
+        isSelected && { 
+            borderColor: '#ffe030', // Gold border when selected
+            borderWidth: 5,
+            transform: [{ scale: 1.02 }] // Slight "pop out" effect
+        }
+        ]}>
      <Svg viewBox='50 10 500 450' style={styles.svgStyling}> 
         {(paths || []).map((p, index) => (
             <Path

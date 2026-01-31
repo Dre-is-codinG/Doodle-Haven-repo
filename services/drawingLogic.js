@@ -8,7 +8,8 @@ import {
     limit,
     getDocs, 
     onSnapshot,
-    doc
+    doc,
+    deleteDoc
 } from "firebase/firestore"
 
 
@@ -69,17 +70,17 @@ export const loadLastDrawing = async () => {
 
 export const liveUpdateGallery = (updateGallery) => {
 // this function live updates drawings to the gallery
-    const currentUser = auth.currentUser;// defines the current user
+    const currentUser = auth.currentUser.uid;// defines the current user
 
-    const drawing = collection(db, "users", currentUser.uid, "Paths");
+    const drawing = collection(db, "users", currentUser, "Paths");
 // this function defines the location in the firestore db which is the "Paths" subcollection
     const qry = query(drawing, orderBy("createdAt", "desc"));
 // this querry applies a reverse order, ordering drawins created from the most recent to the first
 
     const closeConnection = onSnapshot(qry, (data) => {
 // this function handles real time querrying for the firebase and updating the gallery
-        const image = data.docs.map((doc) => ({
-            imageid: doc.id,// holds the document id of each drawing
+        const image = data.docs.map(doc => ({
+            id: doc.id,// holds the document id of each drawing
             ...doc.data(),// separates each drawing (document) into its individual object
         })
     );
@@ -136,4 +137,14 @@ would store paths in the appropriate user id
         console.error("Error when saving test data: ", error)
     }
         
+};
+
+export const deleteDrawing = async (drawingId) => {
+    const userId = auth.currentUser.uid;// this returns the userID of the currently logged in user
+    try {
+        await deleteDoc(doc(db, "users", userId, "Paths", drawingId));// this deletes the specific drawing id 
+        console.log("Deleted the drawing from db successfully!");
+    } catch (error) {
+        console.error("Error when attempting to delete deleting:", error);
+    }
 };

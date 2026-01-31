@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, Animated, ImageBackground } from 'react-native';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -47,16 +47,11 @@ loaded and is complete.
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeareastyle}>
+    <ImageBackground style={styles.safeareastyle}
+    source={require('../assets/images/finalBG.png')}
+    >
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
-        <View style={styles.radiustestview}>
-          <Image
-          source={require('../assets/images/paint-palette.png')}
-          style={styles.logoStyle}
-          />
-        </View>
-        <Text style={styles.titleStyle}>Welcome!</Text>
-        <Text style={styles.subTitleStyle}>Sign Up or Log In to Continue</Text>
+      <View style={styles.buttonView}>
         <DefaultButton 
         title={"Sign Up!"}
         handlePress={() => navigation.navigate('SignUpScreen')}
@@ -67,9 +62,10 @@ loaded and is complete.
         handlePress={() => navigation.navigate('LogInScreen')}
         buttonIcon={require('../assets/images/out.png')}
         />
+      </View>
       </Animated.View>
       <StatusBar style="auto" />
-    </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -80,44 +76,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  titleStyle: {
-    fontSize: width * 0.2,
-    color: theme.COLOURS.tertiary,
-    marginTop: 15,
-    fontWeight: '500',
-    fontFamily: theme.FONTS.subTitleFontFamily
-  },
-  subTitleStyle: {
-    fontSize: width * 0.09,
-    color: theme.COLOURS.tertiary,
-    fontWeight: '300',
-    fontFamily: theme.FONTS.subTitleFontFamily
-  },
-  logoStyle: {
-    width: '115%',
-    height: '106%',
-    shadowOffset:{width:8, height: 4},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 5,
-  },
   AnimatedView: {
     alignItems: 'center',
     flex: 1,
   },
-  radiustestview: {
-    marginTop: 50,
-    width: width * 0.6,
-    height: height * 0.3,
-    backgroundColor: theme.COLOURS.primary,
-    borderWidth: 2,
-    borderRadius: theme.BUTTONS.smoothButtonRadius,
-    shadowOffset: { width: 10, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    shadowColor: theme.BUTTONS.softButtonShadow,
+
+  buttonView: {
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5,
-  },
+    marginVertical: height * 0.7
+  }
 });

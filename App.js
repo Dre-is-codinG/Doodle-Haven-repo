@@ -26,6 +26,8 @@ import { theme } from "./config/theme";
 import { guardianExists } from "./services/guardianLogic";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebaseConfig";
+import { StyleSheet, View } from "react-native";
+import LoaderCatAnim from "./animations/LoaderCatAnim";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -102,13 +104,16 @@ export default function App() {
     })}
     drawerContent={(props) => (
         <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('./assets/images/sliderdb.png')}
         resizeMode="cover"
         >
           <DrawerContentScrollView {...props} contentContainerStyle={{ padding: 20 }}>
             <DrawerItemList {...props} />
           </DrawerContentScrollView>
+          <View style={styles.catContainer}>
+            <LoaderCatAnim />
+          </View>
         </ImageBackground>
       )}
     >
@@ -143,10 +148,18 @@ export default function App() {
           <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen} options={{gestureEnabled: false}} />
           <Stack.Screen name="GuardianPasscodeScreen" component={GuardianPasscodeScreen} />
           <Stack.Screen name="GuardianAccountConfirmationScreen" component={GuardianAccountConfirmationScreen} />
-          <Stack.Screen name="GuardianAccountPasscodeSetScreen" component={GuardianAccountPasscodeSetScreen} />
+          <Stack.Screen name="GuardianAccountPasscodeSetScreen" component={GuardianAccountPasscodeSetScreen} options={{gestureEnabled: false}} />
           <Stack.Screen name="ReportScreen" component={ReportScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SettingsProvider>
   )
 }
+
+const styles = StyleSheet.create({
+  catContainer: {
+    alignItems: "center",
+    marginLeft: 100,
+    paddingBottom: 300
+  },
+});
