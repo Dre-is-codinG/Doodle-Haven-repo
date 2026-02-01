@@ -5,6 +5,7 @@ import { theme } from '../config/theme';
 import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useState } from 'react'
 import { getGuardianDetails, getChildAccountDetails } from '../services/guardianLogic';
+import Profile from '../animations/Profile';
 
 const {height, width} = Dimensions.get('window')
 
@@ -32,12 +33,12 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
             };
           }, []);
 
+
   return (
     <ImageBackground source={require('../assets/images/guardianBG.png')} style={styles.mainContainer}>
-          <Image 
-          source={require('../assets/images/user.png')}
-          style={styles.pfpStyle}
-          />
+        <View style={styles.radiustestview}>
+            <Profile />
+        </View>
           <Text style={styles.formtitle}>Guardian:</Text>
           <View style={styles.formview}>
             <Text style={styles.formtext}>{guardianName || "Loading..."}</Text>
@@ -52,7 +53,10 @@ export default function GuardianAccountConfirmationScreen({ navigation }) {
           >
             <Text style={styles.messageText}>See drawing report</Text>
           </TouchableOpacity>
-           <TouchableOpacity style={styles.messageView2}>
+           <TouchableOpacity 
+           style={styles.messageView2}
+           onPress={() => {navigation.navigate('ChildGalleryScreen')}}
+           >
             <Text style={styles.messageText}>See child's drawings</Text>
           </TouchableOpacity>
     </ImageBackground>
@@ -129,4 +133,19 @@ const styles = StyleSheet.create({
         paddingLeft: 12,
         textAlign: 'left',
     },
+  radiustestview: {
+    marginTop: height * 0.1,
+    width: width * 0.5,
+    height: height * 0.25,
+    backgroundColor: '#ddc9ae3c',
+    borderRadius: theme.BUTTONS.smoothButtonRadius,
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    shadowColor: theme.BUTTONS.softButtonShadow,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    marginBottom: height * 0.05
+  },
 })

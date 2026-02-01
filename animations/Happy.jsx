@@ -3,23 +3,23 @@ import React, { useEffect, useRef, useState } from 'react'
 import LottieView from 'lottie-react-native'
 
 const {height, width} = Dimensions.get('window')
-const LoaderCatAnim = () => {
+const Happy = () => {
     const animationRef = useRef(null);// default state is null
-
   return (
     <View style={styles.container}>
         <LottieView 
         ref={animationRef}
-        source={require('../assets/animations/Loader cat.json')}
+        source={require('../assets/animations/Happy me.json')}
         autoPlay
         loop={true}
         style={styles.lottieView}
+        speed={0.7}
         />
     </View>
   )
 }
 
-export default LoaderCatAnim
+export default Happy
 
 const styles = StyleSheet.create({
     container: {
@@ -27,8 +27,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     lottieView: {
-        width: width * 0.8,
-        height: height * 0.3,
-        marginLeft: width * 0.75
+        width: width * 0.5,
+        height: height * 0.5,
     }
 })

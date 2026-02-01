@@ -3,14 +3,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import LottieView from 'lottie-react-native'
 
 const {height, width} = Dimensions.get('window')
-const LoaderCatAnim = () => {
+const PeekingMonkey = () => {
     const animationRef = useRef(null);// default state is null
-
   return (
-    <View style={styles.container}>
+     <View style={styles.container}>
         <LottieView 
         ref={animationRef}
-        source={require('../assets/animations/Loader cat.json')}
+        source={require('../assets/animations/Login character_Hello.json')}
         autoPlay
         loop={true}
         style={styles.lottieView}
@@ -19,16 +18,17 @@ const LoaderCatAnim = () => {
   )
 }
 
-export default LoaderCatAnim
+export default PeekingMonkey
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
     },
     lottieView: {
-        width: width * 0.8,
-        height: height * 0.3,
-        marginLeft: width * 0.75
+        width: width * 0.5,
+        height: height * 0.25,
+        marginLeft: width * 0.5
     }
 })

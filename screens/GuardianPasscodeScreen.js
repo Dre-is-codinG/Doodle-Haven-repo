@@ -7,6 +7,9 @@ import * as screenOrientation from 'expo-screen-orientation';
 import React, { useEffect, useState } from 'react'
 import HamburgerButton from '../components/HamburgerButton';
 import { verifyGuardianPasscode } from '../services/guardianLogic';
+import PeekingMonkey from '../animations/PeekingMonkey';
+import Profile from '../animations/Profile';
+import Peek from '../animations/Peek';
 
 const {height, width} = Dimensions.get('window')
 export default function GuardianPasscodeScreen({ navigation }) {
@@ -33,10 +36,9 @@ export default function GuardianPasscodeScreen({ navigation }) {
   return (
     <ImageBackground source={require('../assets/images/guardianBG.png')} style={styles.mainContainer}>
       <HamburgerButton onPress={() => navigation.toggleDrawer()} />
-      <Image 
-      source={require('../assets/images/pfp.png')}
-      style={styles.pfpStyle}
-      />
+      <View style={styles.radiustestview}>
+        <Profile />
+      </View>
       <View style={styles.formview}>
         <TextInput 
         style={styles.formtext}
@@ -85,4 +87,19 @@ const styles = StyleSheet.create({
         fontSize: theme.FONTS.regularFontSize,
         paddingLeft: 12,
     },
+  radiustestview: {
+    marginTop: height * 0.1,
+    width: width * 0.5,
+    height: height * 0.25,
+    backgroundColor: '#ddc9ae3c',
+    borderRadius: theme.BUTTONS.smoothButtonRadius,
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    shadowColor: theme.BUTTONS.softButtonShadow,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    marginBottom: height * 0.05
+  },
 })

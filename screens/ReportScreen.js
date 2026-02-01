@@ -37,15 +37,7 @@ const ReportScreen = () => {
                 <Text style={styles.screenTitle}>Drawing Report</Text>
                 
             </View>
-            <View style={styles.graphView}>
-                {loading ? (
-                        <Text>Loading Chart...</Text> 
-                    ) : drawingReportData.length > 0 ? (
-                        <DrawingReport data={drawingReportData}/>
-                    ) : (
-                        <Text>No data available yet</Text>
-                )}
-            </View>
+ 
             <View style={styles.donutGraphView}>
                 {loading ? (
                         <Text>Loading Chart...</Text> 
@@ -100,7 +92,7 @@ const styles = StyleSheet.create({
     },
     donutGraphView: {
         width: width * 0.95,
-        height: height * 0.5,
+        height: height * 0.6,
         backgroundColor: theme.COLOURS.innerbackground,
         marginVertical: height * 0.04,
         alignItems: 'center',

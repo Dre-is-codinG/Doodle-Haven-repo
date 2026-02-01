@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
+import Bees from '../animations/Bees';
+import Welcome from '../animations/Welcome';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -48,9 +50,12 @@ loaded and is complete.
 
   return (
     <ImageBackground style={styles.safeareastyle}
-    source={require('../assets/images/finalBG.png')}
+    source={require('../assets/images/woods.png')}
     >
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
+      <View style={styles.radiustestview}>
+        <Welcome />
+      </View>
       <View style={styles.buttonView}>
         <DefaultButton 
         title={"Sign Up!"}
@@ -84,6 +89,25 @@ const styles = StyleSheet.create({
   buttonView: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: height * 0.7
-  }
+    marginVertical: height * 0.2
+  },
+    catContainer: {
+    alignItems: "center",
+    marginLeft: -210,
+    paddingBottom: 300
+  },
+  radiustestview: {
+    marginTop: height * 0.1,
+    width: width * 0.5,
+    height: height * 0.25,
+    backgroundColor: '#ddc9ae3c',
+    borderRadius: theme.BUTTONS.smoothButtonRadius,
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    shadowColor: theme.BUTTONS.softButtonShadow,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+  },
 });

@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../config/theme'; //imports theme object from config directory.
 import Canvas from '../components/canvas'; //imports canvas component from component directory.
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
+import Bees from '../animations/Bees';
+import Paint from '../animations/Paint';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -52,18 +54,18 @@ loaded and is complete.
     >
       <Animated.View style={[{opacity: FadeInAnimation}, styles.AnimatedView]}>
         <View style={styles.radiustestview}>
-          <Image
-          source={require('../assets/images/logo.png')}
-          style={styles.logoStyle}
-          />
+          <Paint />
         </View>
+        
         <Text style={styles.titleStyle}>Welcome to Doodle-Haven!</Text>
         <Text style={styles.subTitleStyle}>Discover more through Art!</Text>
         <DefaultButton 
         title={"Start Drawing!"}
         handlePress={() => navigation.navigate('OnboardingScreen')}
         />
+
       </Animated.View>
+        
       <StatusBar style="auto" />
     </ImageBackground>
   );
@@ -106,7 +108,6 @@ const styles = StyleSheet.create({
     width: width * 0.5,
     height: height * 0.25,
     backgroundColor: '#ddc9ae3c',
-    borderWidth: 2,
     borderRadius: theme.BUTTONS.smoothButtonRadius,
     shadowOffset: { width: 10, height: 10 },
     shadowOpacity: 0.5,

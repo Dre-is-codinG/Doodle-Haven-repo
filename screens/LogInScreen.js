@@ -7,6 +7,7 @@ import { theme } from '../config/theme'; //imports theme object from config dire
 import DefaultButton from '../components/DefaultButton';//imports DefaultButton component from component directory.
 import FormField from '../components/FormField';
 import { logIn } from '../services/authLogic';
+import PeekingCat from '../animations/PeekingCat';
 
 const {height, width} = Dimensions.get('window')
 /* 
@@ -70,6 +71,7 @@ export default function LogInScreen( { navigation } ) {
           }
         }}
       />
+
       <StatusBar style="auto" />
     </ImageBackground>
   );
@@ -114,5 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
+  catContainer: {
+    alignItems: "center"
+  },
 });

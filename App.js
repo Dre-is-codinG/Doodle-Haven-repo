@@ -18,6 +18,7 @@ import GuardianPasscodeScreen from "./screens/GuardianPasscodeScreen";
 import GuardianAccountConfirmationScreen from "./screens/GuardianAccountConfirmationScreen";
 import GuardianAccountPasscodeSetScreen from "./screens/GuardianAccountPasscodeSetScreen";
 import ReportScreen from "./screens/ReportScreen";
+import ChildGalleryScreen from "./screens/ChildGalleryScreen";
 import * as Font from 'expo-font';
 import { SettingsProvider } from "./services/globalSettings"
 import HamburgerButton from "./components/HamburgerButton";
@@ -28,6 +29,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebaseConfig";
 import { StyleSheet, View } from "react-native";
 import LoaderCatAnim from "./animations/LoaderCatAnim";
+import PlayfulCat from "./animations/PlayfulCat";
+import PeekingCat from "./animations/PeekingCat";
+import Peek from "./animations/Peek";
+import { useSettings } from "./services/globalSettings";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -113,6 +118,8 @@ export default function App() {
           </DrawerContentScrollView>
           <View style={styles.catContainer}>
             <LoaderCatAnim />
+            <PlayfulCat />
+            <Peek />
           </View>
         </ImageBackground>
       )}
@@ -150,6 +157,7 @@ export default function App() {
           <Stack.Screen name="GuardianAccountConfirmationScreen" component={GuardianAccountConfirmationScreen} />
           <Stack.Screen name="GuardianAccountPasscodeSetScreen" component={GuardianAccountPasscodeSetScreen} options={{gestureEnabled: false}} />
           <Stack.Screen name="ReportScreen" component={ReportScreen} />
+          <Stack.Screen name="ChildGalleryScreen" component={ChildGalleryScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SettingsProvider>
@@ -159,7 +167,7 @@ export default function App() {
 const styles = StyleSheet.create({
   catContainer: {
     alignItems: "center",
-    marginLeft: 100,
+    marginLeft: -210,
     paddingBottom: 300
   },
 });

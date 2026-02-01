@@ -7,7 +7,7 @@ export const theme = {
     COLOURS: {
 //default colour themes that would be adopted in the application
         primary: '#ddc9ae',
-        primaryFaint:'#ddc9ae65',
+        primaryFaint:'#ddc9aeb4',
         secondary: '#C0A08A',
         secondaryFaint: '#c0a08a88',
         tertiary: '#A48573',

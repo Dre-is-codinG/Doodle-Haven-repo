@@ -231,7 +231,8 @@ const Canvas = ({ initialPaths }) => {
   };
 
   const eraser = () => {
-
+    setColor('#fff');
+    setStrokeWidth(50);
   };
 
   const createSVG = (paths, width, height) => {
@@ -473,6 +474,14 @@ const Canvas = ({ initialPaths }) => {
             style={styles.functionButtons}>
               <Image
               source={require('../assets/images/broom.png')}
+              style={styles.buttonImageStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={eraser}
+            style={styles.functionButtons}>
+              <Image
+              source={require('../assets/images/eraser.png')}
               style={styles.buttonImageStyle}
               />
             </TouchableOpacity>

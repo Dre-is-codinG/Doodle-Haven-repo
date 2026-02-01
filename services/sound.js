@@ -11,11 +11,11 @@ import { Audio, createAudioPlayer } from "expo-audio";
 //     await soundObject.stopAsync();
 // };
 
-export const backgroundMusic = async (musicFile, shouldLoop = true) => {
+export const backgroundMusic = async (musicFile, shouldLoop = true, volume = 0.2) => {
 // this function accepts a music file and a boolean value to determine if the music should loop
     const player = createAudioPlayer(musicFile)
     player.loop = shouldLoop;
-    player.volume = 0;
+    player.volume = 0.2;
     player.play();
     return player; // returns the player object to allow further control (e.g., stopping the music)
 };

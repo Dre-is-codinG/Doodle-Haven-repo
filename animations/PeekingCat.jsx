@@ -1,34 +1,38 @@
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, Animated } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import LottieView from 'lottie-react-native'
 
 const {height, width} = Dimensions.get('window')
-const LoaderCatAnim = () => {
+const PeekingCat = () => {
     const animationRef = useRef(null);// default state is null
-
   return (
-    <View style={styles.container}>
+     <View style={styles.container}>
         <LottieView 
         ref={animationRef}
-        source={require('../assets/animations/Loader cat.json')}
+        source={require('../assets/animations/Le Petit Chat _Cat_ Noir.json')}
         autoPlay
         loop={true}
         style={styles.lottieView}
+        speed={0.2}
+        
         />
     </View>
   )
 }
 
-export default LoaderCatAnim
+export default PeekingCat
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
     },
     lottieView: {
         width: width * 0.8,
-        height: height * 0.3,
-        marginLeft: width * 0.75
+        height: height * 0.5,
+        marginLeft: width * 0.5,
+        position: 'absolute',
+        top: height * -0.166,
     }
 })
